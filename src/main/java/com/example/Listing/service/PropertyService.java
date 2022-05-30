@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface PropertyService {
 
-    mass_model saveOrUpdateProperty(Property property);
+    mass_model saveOrUpdateProperty(Property property, String city_id);
 
     mass_model findBypropertyId( String propertyId);
 }

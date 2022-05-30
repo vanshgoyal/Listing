@@ -25,9 +25,12 @@ public class PropertRestController {
     @Autowired
     private ParamService paramService;
 
-    @PostMapping (value = "/save")
-    public ResponseEntity<?> saveOrUpdateProperty(@RequestBody PropertyDTO propertyDTO) {
-        propertyService.saveOrUpdateProperty(ObjectMapperUtils.map(propertyDTO, Property.class));
+
+    @PostMapping (value = "/save/{id}")
+    public ResponseEntity<?> saveOrUpdateProperty(@RequestBody PropertyDTO propertyDTO, @PathVariable("id") String city_id) {
+        System.out.println(city_id.getClass().getSimpleName());
+        System.out.println("--------------------------------------------------------------------------");
+        propertyService.saveOrUpdateProperty(ObjectMapperUtils.map(propertyDTO, Property.class),city_id);
         return new ResponseEntity("Property added successfully", HttpStatus.OK);
     }
 

@@ -32,7 +32,7 @@ public class  PropertyServiceImpl implements PropertyService {
     private ParamService paramService;
 
     @Override
-    public mass_model saveOrUpdateProperty(Property property) {
+    public mass_model saveOrUpdateProperty(Property property, String city_id) {
         if(propertyRepository.findBypropertyId(property.getPropertyId())!= null)
         {
 //            Query query = new Query();
@@ -45,7 +45,7 @@ public class  PropertyServiceImpl implements PropertyService {
             property_mass.setPropertyId(property.getPropertyId());
 
             ParamModel paramModel = new ParamModel();
-            paramModel = paramService.findBycityId("1");
+            paramModel = paramService.findBycityId(city_id);
             property_mass.setMassVal(property.getDeposit()* paramModel.getParamDeposit());
             Update update = new Update().set("massVal", property_mass.getMassVal());
 
@@ -57,7 +57,7 @@ public class  PropertyServiceImpl implements PropertyService {
             property_mass.setPropertyId(property.getPropertyId());
 
             ParamModel paramModel = new ParamModel();
-            paramModel = paramService.findBycityId("1");
+            paramModel = paramService.findBycityId(city_id);
             property_mass.setMassVal(property.getDeposit()* paramModel.getParamDeposit());
             return propertyRepository.save(property_mass);
         }
