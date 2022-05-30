@@ -46,6 +46,11 @@ public class ParamServiceImpl  implements ParamService {
     }
 
     @Override
+    public void deleteParamModelById(String id) {
+        paramRepository.deleteParamModelById(id);
+    }
+
+    @Override
     public ParamModel findBycityId(String propertyId) {
 
         return paramRepository.findBycityId(propertyId);

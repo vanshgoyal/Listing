@@ -25,7 +25,10 @@ public class PropertRestController {
     @Autowired
     private ParamService paramService;
 
-
+    @GetMapping(value = "/")
+    public String Home() {
+        return "Hello world";
+    }
     @PostMapping (value = "/save/{id}")
     public ResponseEntity<?> saveOrUpdateProperty(@RequestBody PropertyDTO propertyDTO, @PathVariable("id") String city_id) {
         System.out.println(city_id.getClass().getSimpleName());
@@ -47,5 +50,11 @@ public class PropertRestController {
     @GetMapping(value = "/byParamId/{ParamId}")
     public ParamModel getParamById(@PathVariable("ParamId") String ParamId) {
         return ObjectMapperUtils.map(paramService.findBycityId(ParamId), ParamModel.class);
+    }
+
+    @DeleteMapping(value = "/deleteParam/{id}")
+    public ResponseEntity<?> deleteParamByCityId(@PathVariable("id") String city_id) {
+        paramService.deleteParamModelById(paramService.findBycityId(city_id).getId());
+        return new ResponseEntity("param deleted successfully", HttpStatus.OK);
     }
 }

@@ -10,4 +10,6 @@ public interface ParamRepository extends MongoRepository<ParamModel, String> {
 
 
     ParamModel findBycityId( String cityId);
+
+    void deleteParamModelById(String id);
 }
