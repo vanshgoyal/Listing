@@ -5,6 +5,7 @@ import com.example.Listing.model.mass_model;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
 import com.example.Listing.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class  PropertyServiceImpl implements PropertyService {
 
+    @Autowired
+    private MongoTemplate mt;
     @Autowired
     private PropertyRepository propertyRepository;
 
