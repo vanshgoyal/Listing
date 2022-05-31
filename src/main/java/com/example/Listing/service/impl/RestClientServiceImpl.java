@@ -1,9 +1,7 @@
 package com.example.Listing.service.impl;
 
 import com.example.Listing.dto.PropertyDTO;
-import com.example.Listing.model.PropertyModel;
-import com.example.Listing.service.RestClient;
-import com.example.Listing.utils.ObjectMapperUtils;
+import com.example.Listing.service.RestClientService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.HttpGet;
@@ -16,14 +14,14 @@ import org.apache.http.HttpResponse;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RestClientServiceImpl implements RestClient
+public class RestClientServiceImpl implements RestClientService
 {
 
-    public PropertyDTO get(String uri) throws Exception {
+    public PropertyDTO getPropertyDTO(String uri) throws Exception {
         CloseableHttpClient httpclient = HttpClients.createDefault();
 
         //Creating a HttpGet object
-        HttpGet httpget = new HttpGet("https://www.nobroker.in/api/v1/property/ff8081815470b1de015476e59b036948");
+        HttpGet httpget = new HttpGet(uri);
 
         //Printing the method used
         System.out.println("Request Type: " + httpget.getMethod());
