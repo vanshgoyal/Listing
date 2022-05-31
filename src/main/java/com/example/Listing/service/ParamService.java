@@ -7,5 +7,5 @@ public interface ParamService {
 
     void deleteParamModelById(String id);
 
-    ParamModel findBycityId(String cityId);
+    ParamModel findByCityId(String cityId);
 }

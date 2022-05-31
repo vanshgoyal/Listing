@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "masses")
-public class mass_model {
+public class MassModel {
     @Id
     private String id;
 
@@ -36,11 +36,11 @@ public class mass_model {
         this.massVal = massVal;
     }
 
-    public mass_model(){
+    public MassModel(){
 
     }
 
-    public mass_model(String id, String propertyId, float massVal) {
+    public MassModel(String id, String propertyId, float massVal) {
         this.id = id;
         this.propertyId = propertyId;
         this.massVal = massVal;
@@ -48,7 +48,7 @@ public class mass_model {
 
     @Override
     public String toString() {
-        return "mass_model{" +
+        return "MassModel{" +
                 "id='" + id + '\'' +
                 ", propertyId='" + propertyId + '\'' +
                 ", massVal=" + massVal +

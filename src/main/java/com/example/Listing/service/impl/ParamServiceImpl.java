@@ -1,15 +1,9 @@
 package com.example.Listing.service.impl;
 
 import com.example.Listing.model.ParamModel;
-import com.example.Listing.model.Property;
-import com.example.Listing.model.mass_model;
 import com.example.Listing.repository.RepositoryParam.ParamRepository;
-import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
 import com.example.Listing.service.ParamService;
-import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -51,7 +45,7 @@ public class ParamServiceImpl  implements ParamService {
     }
 
     @Override
-    public ParamModel findBycityId(String propertyId) {
+    public ParamModel findByCityId(String propertyId) {
 
         return paramRepository.findBycityId(propertyId);
     }

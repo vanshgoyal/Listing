@@ -1,13 +1,11 @@
 package com.example.Listing.service;
 
-import com.example.Listing.model.Property;
-import com.example.Listing.model.mass_model;
-
-import java.util.List;
+import com.example.Listing.model.PropertyModel;
+import com.example.Listing.model.MassModel;
 
 public interface PropertyService {
 
-    mass_model saveOrUpdateProperty(Property property, String city_id);
+    MassModel saveOrUpdateProperty(PropertyModel property, String city_id);
 
-    mass_model findBypropertyId( String propertyId);
+    MassModel findBypropertyId(String propertyId);
 }

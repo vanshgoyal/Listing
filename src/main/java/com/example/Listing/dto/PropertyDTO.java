@@ -8,31 +8,42 @@ public class PropertyDTO {
 
     private String propertyId;
 
-    private int type;
+    private String type;
 
     private float latitude;
 
     private float longitude;
 
-    private int leaseType;
+    private String leaseType;
 
-    private int parking;
+    private String  parking;
 
-    private int furnishing;
+    private String furnishing;
 
     private int rent;
 
     private int deposit;
 
-    private int buildingType;
+    private String buildingType;
 
-    private int lifestyle;
+    @Override
+    public String toString() {
+        return "PropertyModel{" +
+                "id='" + id + '\'' +
+                ", propertyId='" + propertyId + '\'' +
+                ", type='" + type + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", leaseType='" + leaseType + '\'' +
+                ", parking='" + parking + '\'' +
+                ", furnishing='" + furnishing + '\'' +
+                ", rent=" + rent +
+                ", deposit=" + deposit +
+                ", buildingType='" + buildingType + '\'' +
+                '}';
+    }
 
-    private int transit;
-
-    private int photoCount;
-
-    public String getId(){
+    public String getId() {
         return id;
     }
 
@@ -48,11 +59,11 @@ public class PropertyDTO {
         this.propertyId = propertyId;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -72,27 +83,27 @@ public class PropertyDTO {
         this.longitude = longitude;
     }
 
-    public int getLeaseType() {
+    public String getLeaseType() {
         return leaseType;
     }
 
-    public void setLeaseType(int leaseType) {
+    public void setLeaseType(String leaseType) {
         this.leaseType = leaseType;
     }
 
-    public int getParking() {
+    public String getParking() {
         return parking;
     }
 
-    public void setParking(int parking) {
+    public void setParking(String parking) {
         this.parking = parking;
     }
 
-    public int getFurnishing() {
+    public String getFurnishing() {
         return furnishing;
     }
 
-    public void setFurnishing(int furnishing) {
+    public void setFurnishing(String furnishing) {
         this.furnishing = furnishing;
     }
 
@@ -112,43 +123,17 @@ public class PropertyDTO {
         this.deposit = deposit;
     }
 
-    public int getBuildingType() {
+    public String getBuildingType() {
         return buildingType;
     }
 
-    public void setBuildingType(int buildingType) {
+    public void setBuildingType(String buildingType) {
         this.buildingType = buildingType;
     }
+    public PropertyDTO(){
 
-    public int getLifestyle() {
-        return lifestyle;
     }
-
-    public void setLifestyle(int lifestyle) {
-        this.lifestyle = lifestyle;
-    }
-
-    public int getTransit() {
-        return transit;
-    }
-
-    public void setTransit(int transit) {
-        this.transit = transit;
-    }
-
-    public int getPhotoCount() {
-        return photoCount;
-    }
-
-    public void setPhotoCount(int photoCount) {
-        this.photoCount = photoCount;
-    }
-
-
-    public PropertyDTO() {
-    }
-
-    public PropertyDTO(String id, String propertyId, int type, float latitude, float longitude, int leaseType, int parking, int furnishing, int rent, int deposit, int buildingType, int lifestyle, int transit, int photoCount) {
+    public PropertyDTO(String id, String propertyId, String type, float latitude, float longitude, String leaseType, String parking, String furnishing, int rent, int deposit, String buildingType) {
         this.id = id;
         this.propertyId = propertyId;
         this.type = type;
@@ -160,8 +145,5 @@ public class PropertyDTO {
         this.rent = rent;
         this.deposit = deposit;
         this.buildingType = buildingType;
-        this.lifestyle = lifestyle;
-        this.transit = transit;
-        this.photoCount = photoCount;
     }
 }

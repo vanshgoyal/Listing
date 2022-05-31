@@ -1,8 +1,8 @@
 package com.example.Listing.service.impl;
 
+import com.example.Listing.model.MassModel;
 import com.example.Listing.model.ParamModel;
-import com.example.Listing.model.Property;
-import com.example.Listing.model.mass_model;
+import com.example.Listing.model.PropertyModel;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
 import com.example.Listing.service.ParamService;
 import com.example.Listing.service.PropertyService;
@@ -11,12 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.Future;
 
 /**
  * @author ragcrix
@@ -32,7 +27,7 @@ public class  PropertyServiceImpl implements PropertyService {
     private ParamService paramService;
 
     @Override
-    public mass_model saveOrUpdateProperty(Property property, String city_id) {
+    public MassModel saveOrUpdateProperty(PropertyModel property, String cityId) {
         if(propertyRepository.findBypropertyId(property.getPropertyId())!= null)
         {
 //            Query query = new Query();
@@ -40,32 +35,32 @@ public class  PropertyServiceImpl implements PropertyService {
             Query query = new Query(
                     Criteria.where("propertyId").is(property.getPropertyId()));
             System.out.println(query);
-            mass_model property_mass = new mass_model();
-            property_mass.setId(property.getId());
-            property_mass.setPropertyId(property.getPropertyId());
+            MassModel propertyMass = new MassModel();
+            propertyMass.setId(property.getId());
+            propertyMass.setPropertyId(property.getPropertyId());
 
             ParamModel paramModel = new ParamModel();
-            paramModel = paramService.findBycityId(city_id);
-            property_mass.setMassVal(property.getDeposit()* paramModel.getParamDeposit());
-            Update update = new Update().set("massVal", property_mass.getMassVal());
+            paramModel = paramService.findByCityId(cityId);
+            propertyMass.setMassVal(property.getDeposit()* paramModel.getParamDeposit());
+            Update update = new Update().set("massVal", propertyMass.getMassVal());
 
-            return mt.findAndModify(query, update, mass_model.class);
+            return mt.findAndModify(query, update, MassModel.class);
         }
         else {
-            mass_model property_mass = new mass_model();
-            property_mass.setId(property.getId());
-            property_mass.setPropertyId(property.getPropertyId());
+            MassModel propertyMass = new MassModel();
+            propertyMass.setId(property.getId());
+            propertyMass.setPropertyId(property.getPropertyId());
 
             ParamModel paramModel = new ParamModel();
-            paramModel = paramService.findBycityId(city_id);
-            property_mass.setMassVal(property.getDeposit()* paramModel.getParamDeposit());
-            return propertyRepository.save(property_mass);
+            paramModel = paramService.findByCityId(cityId);
+            propertyMass.setMassVal(property.getDeposit()* paramModel.getParamDeposit());
+            return propertyRepository.save(propertyMass);
         }
 
     }
 
     @Override
-    public mass_model findBypropertyId(String propertyId) {
+    public MassModel findBypropertyId(String propertyId) {
 
         return propertyRepository.findBypropertyId(propertyId);
     }

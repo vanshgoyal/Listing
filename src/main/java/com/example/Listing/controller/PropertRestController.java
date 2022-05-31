@@ -2,9 +2,9 @@ package com.example.Listing.controller;
 
 import com.example.Listing.dto.ParamDTO;
 import com.example.Listing.dto.PropertyDTO;
+import com.example.Listing.model.MassModel;
 import com.example.Listing.model.ParamModel;
-import com.example.Listing.model.Property;
-import com.example.Listing.model.mass_model;
+import com.example.Listing.model.PropertyModel;
 import com.example.Listing.service.ParamService;
 import com.example.Listing.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 
 @RestController
 @RequestMapping("/property")
 public class PropertRestController {
 
+    //Logger logger = LoggerFactory.getLogger(HomeResource.class);
     @Autowired
     private PropertyService propertyService;
     @Autowired
@@ -30,11 +29,10 @@ public class PropertRestController {
         return "Hello world";
     }
     @PostMapping (value = "/save/{id}")
-    public ResponseEntity<?> saveOrUpdateProperty(@RequestBody PropertyDTO propertyDTO, @PathVariable("id") String city_id) {
-        System.out.println(city_id.getClass().getSimpleName());
-        System.out.println("--------------------------------------------------------------------------");
-        propertyService.saveOrUpdateProperty(ObjectMapperUtils.map(propertyDTO, Property.class),city_id);
-        return new ResponseEntity("Property added successfully", HttpStatus.OK);
+    public ResponseEntity<?> saveOrUpdateProperty(@RequestBody PropertyDTO propertyDTO, @PathVariable("id") String cityId) {
+        System.out.println(propertyDTO);
+        propertyService.saveOrUpdateProperty(ObjectMapperUtils.map(propertyDTO, PropertyModel.class),cityId);
+        return new ResponseEntity("PropertyModel added successfully", HttpStatus.OK);
     }
 
     @PostMapping (value = "/saveParam")
@@ -43,18 +41,18 @@ public class PropertRestController {
         return new ResponseEntity("Param added successfully", HttpStatus.OK);
     }
 
-    @GetMapping(value = "/byPropId/{PropId}")
-    public mass_model getPropertyById(@PathVariable("PropId") String PropId) {
-        return ObjectMapperUtils.map(propertyService.findBypropertyId(PropId), mass_model.class);
+    @GetMapping(value = "/byPropId/{propId}")
+    public MassModel getPropertyById(@PathVariable("propId") String propId) {
+        return ObjectMapperUtils.map(propertyService.findBypropertyId(propId), MassModel.class);
     }
-    @GetMapping(value = "/byParamId/{ParamId}")
-    public ParamModel getParamById(@PathVariable("ParamId") String ParamId) {
-        return ObjectMapperUtils.map(paramService.findBycityId(ParamId), ParamModel.class);
+    @GetMapping(value = "/byParamId/{paramId}")
+    public ParamModel getParamById(@PathVariable("paramId") String paramId) {
+        return ObjectMapperUtils.map(paramService.findByCityId(paramId), ParamModel.class);
     }
 
     @DeleteMapping(value = "/deleteParam/{id}")
-    public ResponseEntity<?> deleteParamByCityId(@PathVariable("id") String city_id) {
-        paramService.deleteParamModelById(paramService.findBycityId(city_id).getId());
+    public ResponseEntity<?> deleteParamByCityId(@PathVariable("id") String cityId) {
+        paramService.deleteParamModelById(paramService.findByCityId(cityId).getId());
         return new ResponseEntity("param deleted successfully", HttpStatus.OK);
     }
 }

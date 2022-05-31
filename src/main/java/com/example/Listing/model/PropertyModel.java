@@ -4,38 +4,32 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "properties")
-public class Property {
+public class PropertyModel {
 
     @Id
     private String id;
 
     private String propertyId;
 
-    private int type;
+    private String type;
 
     private float latitude;
 
     private float longitude;
 
-    private int leaseType;
+    private String leaseType;
 
-    private int parking;
+    private String  parking;
 
-    private int furnishing;
+    private String furnishing;
 
     private int rent;
 
     private int deposit;
 
-    private int buildingType;
+    private String buildingType;
 
-    private int lifestyle;
-
-    private int transit;
-
-    private int photoCount;
-
-    public String getId(){
+    public String getId() {
         return id;
     }
 
@@ -51,11 +45,11 @@ public class Property {
         this.propertyId = propertyId;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -75,27 +69,27 @@ public class Property {
         this.longitude = longitude;
     }
 
-    public int getLeaseType() {
+    public String getLeaseType() {
         return leaseType;
     }
 
-    public void setLeaseType(int leaseType) {
+    public void setLeaseType(String leaseType) {
         this.leaseType = leaseType;
     }
 
-    public int getParking() {
+    public String getParking() {
         return parking;
     }
 
-    public void setParking(int parking) {
+    public void setParking(String parking) {
         this.parking = parking;
     }
 
-    public int getFurnishing() {
+    public String getFurnishing() {
         return furnishing;
     }
 
-    public void setFurnishing(int furnishing) {
+    public void setFurnishing(String furnishing) {
         this.furnishing = furnishing;
     }
 
@@ -115,43 +109,18 @@ public class Property {
         this.deposit = deposit;
     }
 
-    public int getBuildingType() {
+    public String getBuildingType() {
         return buildingType;
     }
 
-    public void setBuildingType(int buildingType) {
+    public void setBuildingType(String buildingType) {
         this.buildingType = buildingType;
     }
 
-    public int getLifestyle() {
-        return lifestyle;
+    public PropertyModel(){
+
     }
-
-    public void setLifestyle(int lifestyle) {
-        this.lifestyle = lifestyle;
-    }
-
-    public int getTransit() {
-        return transit;
-    }
-
-    public void setTransit(int transit) {
-        this.transit = transit;
-    }
-
-    public int getPhotoCount() {
-        return photoCount;
-    }
-
-    public void setPhotoCount(int photoCount) {
-        this.photoCount = photoCount;
-    }
-
-
-    public Property() {
-    }
-
-    public Property(String id, String propertyId, int type, float latitude, float longitude, int leaseType, int parking, int furnishing, int rent, int deposit, int buildingType, int lifestyle, int transit, int photoCount) {
+    public PropertyModel(String id, String propertyId, String type, float latitude, float longitude, String leaseType, String parking, String furnishing, int rent, int deposit, String buildingType) {
         this.id = id;
         this.propertyId = propertyId;
         this.type = type;
@@ -163,28 +132,22 @@ public class Property {
         this.rent = rent;
         this.deposit = deposit;
         this.buildingType = buildingType;
-        this.lifestyle = lifestyle;
-        this.transit = transit;
-        this.photoCount = photoCount;
     }
 
     @Override
     public String toString() {
-        return "Property{" +
+        return "PropertyModel{" +
                 "id='" + id + '\'' +
                 ", propertyId='" + propertyId + '\'' +
-                ", type=" + type +
+                ", type='" + type + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", leaseType=" + leaseType +
-                ", parking=" + parking +
-                ", furnishing=" + furnishing +
+                ", leaseType='" + leaseType + '\'' +
+                ", parking='" + parking + '\'' +
+                ", furnishing='" + furnishing + '\'' +
                 ", rent=" + rent +
                 ", deposit=" + deposit +
-                ", buildingType=" + buildingType +
-                ", lifestyle=" + lifestyle +
-                ", transit=" + transit +
-                ", photoCount=" + photoCount +
+                ", buildingType='" + buildingType + '\'' +
                 '}';
     }
 }
