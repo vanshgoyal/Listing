@@ -1,17 +1,29 @@
 package com.example.Listing.service.impl;
 
+import com.example.Listing.dto.PropertyDTO;
 import com.example.Listing.model.MassModel;
 import com.example.Listing.model.ParamModel;
 import com.example.Listing.model.PropertyModel;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
 import com.example.Listing.service.ParamService;
 import com.example.Listing.service.PropertyService;
+import com.example.Listing.utils.ObjectMapperUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import static com.example.Listing.service.QualityScoreCalculation.QualityScore;
+import static java.lang.Integer.parseInt;
 
 /**
  * @author ragcrix
@@ -27,33 +39,60 @@ public class  PropertyServiceImpl implements PropertyService {
     private ParamService paramService;
 
     @Override
-    public MassModel saveOrUpdateProperty(PropertyModel property, String cityId) {
-        if(propertyRepository.findBypropertyId(property.getPropertyId())!= null)
-        {
-//            Query query = new Query();
-//            Update update = new Update().inc("paramType", paramModel.getParamType());
-            Query query = new Query(
-                    Criteria.where("propertyId").is(property.getPropertyId()));
-            System.out.println(query);
-            MassModel propertyMass = new MassModel();
-            propertyMass.setId(property.getId());
-            propertyMass.setPropertyId(property.getPropertyId());
+    public MassModel saveOrUpdateProperty(String cityId, String propertyId) throws JsonProcessingException, ParseException {
+        final String uri = "https://www.nobroker.in/api/v1/property/"+propertyId;
+        RestTemplate restTemplate = new RestTemplate();
+        JSONObject result = restTemplate.getForObject(uri, JSONObject.class);
 
+//        System.out.println(result.toJSONString());
+//        System.out.println("-------------------------------------------------------------");
+//        JSONObject res = (JSONObject) new JSONParser().parse((String) result.get("data"));
+//        System.out.println(res);
+//        System.out.println("-------------------------------------------------------------");
+//        String result1 = (result.get("data")).toString();
+//        System.out.println(result1);
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        PropertyDTO propertyDTO = objectMapper.readValue(result1, PropertyDTO.class);
+//        System.out.println("-------------------------------------------------------------");
+//        System.out.println(propertyDTO);
+
+        JsonNode productNode = new ObjectMapper().readTree(String.valueOf(result));
+        PropertyDTO propertyDTO = new PropertyDTO();
+        propertyDTO.setPropertyId(productNode.get("data").get("id").textValue());
+        propertyDTO.setType(productNode.get("data").get("type").textValue());
+        propertyDTO.setDeposit(productNode.get("data").get("deposit").intValue());
+        propertyDTO.setLatitude(productNode.get("data").get("latitude").floatValue());
+        propertyDTO.setLongitude(productNode.get("data").get("longitude").floatValue());
+        propertyDTO.setLeaseType(productNode.get("data").get("leaseType").textValue());
+        propertyDTO.setParking(productNode.get("data").get("parking").textValue());
+        propertyDTO.setFurnishing(productNode.get("data").get("furnishing").textValue());
+        propertyDTO.setRent(productNode.get("data").get("rent").intValue());
+        propertyDTO.setBuildingType(productNode.get("data").get("buildingType").textValue());
+        PropertyModel propertyParams = ObjectMapperUtils.map(propertyDTO, PropertyModel.class);
+
+
+        if(propertyRepository.findBypropertyId(propertyParams.getPropertyId())!= null)
+        {
+            Query query = new Query(
+                    Criteria.where("propertyId").is(propertyParams.getPropertyId()));
+            MassModel propertyMass = new MassModel();
+            propertyMass.setId(propertyParams.getId());
+            propertyMass.setPropertyId(propertyParams.getPropertyId());
             ParamModel paramModel = new ParamModel();
             paramModel = paramService.findByCityId(cityId);
-            propertyMass.setMassVal(property.getDeposit()* paramModel.getParamDeposit());
+
+            propertyMass.setMassVal(QualityScore(propertyParams, paramModel));
             Update update = new Update().set("massVal", propertyMass.getMassVal());
 
             return mt.findAndModify(query, update, MassModel.class);
         }
         else {
             MassModel propertyMass = new MassModel();
-            propertyMass.setId(property.getId());
-            propertyMass.setPropertyId(property.getPropertyId());
-
+            propertyMass.setId(propertyParams.getId());
+            propertyMass.setPropertyId(propertyParams.getPropertyId());
             ParamModel paramModel = new ParamModel();
             paramModel = paramService.findByCityId(cityId);
-            propertyMass.setMassVal(property.getDeposit()* paramModel.getParamDeposit());
+            propertyMass.setMassVal(QualityScore(propertyParams, paramModel));
             return propertyRepository.save(propertyMass);
         }
 
