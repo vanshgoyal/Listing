@@ -7,6 +7,7 @@ import com.example.Listing.model.PropertyModel;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
 import com.example.Listing.service.ParamService;
 import com.example.Listing.service.PropertyService;
+import com.example.Listing.service.RestClient;
 import com.example.Listing.utils.ObjectMapperUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,13 +37,16 @@ public class  PropertyServiceImpl implements PropertyService {
     @Autowired
     private PropertyRepository propertyRepository;
     @Autowired
+    private RestClient restClient;
+    @Autowired
     private ParamService paramService;
 
     @Override
-    public MassModel saveOrUpdateProperty(String cityId, String propertyId) throws JsonProcessingException, ParseException {
+    public MassModel saveOrUpdateProperty(String cityId, String propertyId) throws Exception {
         final String uri = "https://www.nobroker.in/api/v1/property/"+propertyId;
-        RestTemplate restTemplate = new RestTemplate();
-        JSONObject result = restTemplate.getForObject(uri, JSONObject.class);
+        PropertyDTO propertyDTO = restClient.get("uri");
+//        RestTemplate restTemplate = new RestTemplate();
+//        JSONObject result = restTemplate.getForObject(uri, JSONObject.class);
 
 //        System.out.println(result.toJSONString());
 //        System.out.println("-------------------------------------------------------------");
@@ -56,18 +60,6 @@ public class  PropertyServiceImpl implements PropertyService {
 //        System.out.println("-------------------------------------------------------------");
 //        System.out.println(propertyDTO);
 
-        JsonNode productNode = new ObjectMapper().readTree(String.valueOf(result));
-        PropertyDTO propertyDTO = new PropertyDTO();
-        propertyDTO.setPropertyId(productNode.get("data").get("id").textValue());
-        propertyDTO.setType(productNode.get("data").get("type").textValue());
-        propertyDTO.setDeposit(productNode.get("data").get("deposit").intValue());
-        propertyDTO.setLatitude(productNode.get("data").get("latitude").floatValue());
-        propertyDTO.setLongitude(productNode.get("data").get("longitude").floatValue());
-        propertyDTO.setLeaseType(productNode.get("data").get("leaseType").textValue());
-        propertyDTO.setParking(productNode.get("data").get("parking").textValue());
-        propertyDTO.setFurnishing(productNode.get("data").get("furnishing").textValue());
-        propertyDTO.setRent(productNode.get("data").get("rent").intValue());
-        propertyDTO.setBuildingType(productNode.get("data").get("buildingType").textValue());
         PropertyModel propertyParams = ObjectMapperUtils.map(propertyDTO, PropertyModel.class);
 
 

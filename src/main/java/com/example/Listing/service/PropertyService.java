@@ -6,7 +6,7 @@ import org.json.simple.parser.ParseException;
 
 public interface PropertyService {
 
-    MassModel saveOrUpdateProperty(String cityId,String propertyId) throws JsonProcessingException, ParseException;
+    MassModel saveOrUpdateProperty(String cityId,String propertyId) throws Exception;
 
     MassModel findBypropertyId(String propertyId);
 }

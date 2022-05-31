@@ -47,7 +47,7 @@ public class PropertRestController {
         abc.get("knscksnck");
     }
     @PostMapping (value = "/save/{id}/{propId}")
-    public ResponseEntity<?> saveOrUpdateProperty(@PathVariable("id") String cityId, @PathVariable("propId") String properyId) throws ParseException, IOException {
+    public ResponseEntity<?> saveOrUpdateProperty(@PathVariable("id") String cityId, @PathVariable("propId") String properyId) throws Exception {
         propertyService.saveOrUpdateProperty(cityId, properyId);
         return new ResponseEntity("PropertyModel added successfully", HttpStatus.OK);
     }

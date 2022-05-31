@@ -1,8 +1,9 @@
 package com.example.Listing.service;
 
 import com.example.Listing.dto.PropertyDTO;
+import com.example.Listing.model.PropertyModel;
 
 public interface RestClient {
-    void get(String uri) throws Exception;
+     PropertyDTO get(String uri) throws Exception;
     PropertyDTO getPropertyDetails(String propertyId);
 }
