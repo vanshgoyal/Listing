@@ -50,11 +50,6 @@ public class RestClientServiceImpl implements RestClientService
 
     }
 
-    @Override
-    public PropertyDTO getPropertyDetails(String propertyId) {
-        return null;
-    }
-
 //    @Override
 //    public PropertyDTO getPropertyDetails(String propertyId) {
 //        return null;

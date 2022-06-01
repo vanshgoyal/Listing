@@ -35,7 +35,7 @@ public class PropertyRestController {
     }
     @PostMapping (value = "/save/{id}/{propId}")
     public ResponseEntity<?> saveOrUpdatePropertyScore(@PathVariable("id") String cityId, @PathVariable("propId") String propertyId) throws Exception {
-        MassModel massModel = propertyService.CalculatePropertyScore(cityId, propertyId);
+        MassModel massModel = propertyService.calculatePropertyScore(cityId, propertyId);
         savePropertyScoreService.savePropertyMass(propertyId, massModel);
         return new ResponseEntity("PropertyModel added successfully", HttpStatus.OK);
     }

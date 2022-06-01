@@ -39,7 +39,7 @@ public class  PropertyServiceImpl implements PropertyService {
     Logger logger = LoggerFactory.getLogger(LoggingController.class);
 
     @Override
-    public MassModel CalculatePropertyScore(String cityId, String propertyId) throws Exception {
+    public MassModel calculatePropertyScore(String cityId, String propertyId) throws Exception {
         final String uri = "https://www.nobroker.in/api/v1/property/"+propertyId;
         PropertyDTO propertyDTO = restClientService.getPropertyDTO(uri);
 //        RestTemplate restTemplate = new RestTemplate();

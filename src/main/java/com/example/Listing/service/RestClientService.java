@@ -4,5 +4,4 @@ import com.example.Listing.dto.PropertyDTO;
 
 public interface RestClientService {
      PropertyDTO getPropertyDTO(String uri) throws Exception;
-    PropertyDTO getPropertyDetails(String propertyId);
 }
