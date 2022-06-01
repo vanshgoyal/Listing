@@ -1,6 +1,7 @@
 package com.example.Listing.service.impl;
 
 import com.example.Listing.dto.PropertyDTO;
+import com.example.Listing.loggingFolder.LoggingController;
 import com.example.Listing.model.MassModel;
 import com.example.Listing.model.ParamModel;
 import com.example.Listing.model.PropertyModel;
@@ -9,6 +10,8 @@ import com.example.Listing.service.ParamService;
 import com.example.Listing.service.PropertyService;
 import com.example.Listing.service.RestClientService;
 import com.example.Listing.utils.ObjectMapperUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -33,9 +36,10 @@ public class  PropertyServiceImpl implements PropertyService {
     private RestClientService restClientService;
     @Autowired
     private ParamService paramService;
+    Logger logger = LoggerFactory.getLogger(LoggingController.class);
 
     @Override
-    public MassModel saveOrUpdatePropertyScore(String cityId, String propertyId) throws Exception {
+    public MassModel CalculatePropertyScore(String cityId, String propertyId) throws Exception {
         final String uri = "https://www.nobroker.in/api/v1/property/"+propertyId;
         PropertyDTO propertyDTO = restClientService.getPropertyDTO(uri);
 //        RestTemplate restTemplate = new RestTemplate();
@@ -67,9 +71,16 @@ public class  PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public MassModel findBypropertyId(String propertyId) {
+    public MassModel findScoreBypropertyId(String propertyId) {
+        MassModel massModel = propertyRepository.findBypropertyId(propertyId);
+        if (massModel != null) {
+            return massModel;
+        } else {
+            logger.error("No property by this Id available. Please add the the property");
+            MassModel placeHolder = new MassModel();
+            return placeHolder;
+        }
 
-        return propertyRepository.findBypropertyId(propertyId);
     }
 
 }

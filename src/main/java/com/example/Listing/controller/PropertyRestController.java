@@ -6,7 +6,7 @@ import com.example.Listing.model.MassModel;
 import com.example.Listing.model.ParamModel;
 import com.example.Listing.service.ParamService;
 import com.example.Listing.service.PropertyService;
-import com.example.Listing.service.SaveMassScore;
+import com.example.Listing.service.SavePropertyScoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class PropertyRestController {
     @Autowired
     private PropertyService propertyService;
     @Autowired
-    private SaveMassScore saveMassScore;
+    private SavePropertyScoreService savePropertyScoreService;
     @Autowired
     private ParamService paramService;
     private Class<? extends org.json.simple.JSONObject> JSONObject;
@@ -35,8 +35,8 @@ public class PropertyRestController {
     }
     @PostMapping (value = "/save/{id}/{propId}")
     public ResponseEntity<?> saveOrUpdatePropertyScore(@PathVariable("id") String cityId, @PathVariable("propId") String propertyId) throws Exception {
-        MassModel massModel = propertyService.saveOrUpdatePropertyScore(cityId, propertyId);
-        saveMassScore.saveMass(propertyId, massModel);
+        MassModel massModel = propertyService.CalculatePropertyScore(cityId, propertyId);
+        savePropertyScoreService.savePropertyMass(propertyId, massModel);
         return new ResponseEntity("PropertyModel added successfully", HttpStatus.OK);
     }
 
@@ -47,8 +47,8 @@ public class PropertyRestController {
     }
 
     @GetMapping(value = "/byPropId/{propId}")
-    public MassModel getPropertyById(@PathVariable("propId") String propId) {
-        return ObjectMapperUtils.map(propertyService.findBypropertyId(propId), MassModel.class);
+    public MassModel getPropertyMassById(@PathVariable("propId") String propId) {
+        return ObjectMapperUtils.map(propertyService.findScoreBypropertyId(propId), MassModel.class);
     }
     @GetMapping(value = "/byParamId/{paramId}")
     public ParamModel getParamById(@PathVariable("paramId") String paramId) {

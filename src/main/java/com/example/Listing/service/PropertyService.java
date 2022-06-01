@@ -4,7 +4,7 @@ import com.example.Listing.model.MassModel;
 
 public interface PropertyService {
 
-    MassModel saveOrUpdatePropertyScore(String cityId, String propertyId) throws Exception;
+    MassModel CalculatePropertyScore(String cityId, String propertyId) throws Exception;
 
-    MassModel findBypropertyId(String propertyId);
+    MassModel findScoreBypropertyId(String propertyId);
 }

@@ -2,7 +2,7 @@ package com.example.Listing.service.impl;
 
 import com.example.Listing.model.MassModel;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
-import com.example.Listing.service.SaveMassScore;
+import com.example.Listing.service.SavePropertyScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -11,14 +11,14 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SaveMassScoreImpl implements SaveMassScore {
+public class SavePropertyScoreServiceImpl implements SavePropertyScoreService {
 
     @Autowired
     private PropertyRepository propertyRepository;
     @Autowired
     private MongoTemplate mt;
 
-    public void saveMass(String propertyId, MassModel propertyMass){
+    public void savePropertyMass(String propertyId, MassModel propertyMass){
         if(propertyRepository.findBypropertyId(propertyId)!= null)
         {
             System.out.println("found");
