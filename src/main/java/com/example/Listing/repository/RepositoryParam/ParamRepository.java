@@ -1,12 +1,12 @@
 package com.example.Listing.repository.RepositoryParam;
 
-import com.example.Listing.model.ParamModel;
+import com.example.Listing.model.CoefficientModel;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface ParamRepository extends MongoRepository<ParamModel, String> {
+public interface ParamRepository extends MongoRepository<CoefficientModel, String> {
 
 
-    ParamModel findBycityId( String cityId);
+    CoefficientModel findByCityId(String cityId);
 
     void deleteParamModelById(String id);
 }

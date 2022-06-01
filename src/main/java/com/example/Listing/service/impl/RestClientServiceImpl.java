@@ -5,6 +5,8 @@ import com.example.Listing.service.RestClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -13,29 +15,31 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import org.apache.http.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RestClientServiceImpl implements RestClientService
 {
+    Logger logger = LoggerFactory.getLogger(RestClientServiceImpl.class);
+    public PropertyDTO getPropertyDTO(String propertyId) {
 
-    public PropertyDTO getPropertyDTO(String uri) {
+        String uri = "https://www.nobroker.in/api/v1/property/"+propertyId;
+        // abstract this section of request creation and execute
         CloseableHttpClient httpclient = HttpClients.createDefault();
 
-        //Creating a HttpGet object
         HttpGet httpget = new HttpGet(uri);
 
-        //Printing the method used
         System.out.println("Request Type: " + httpget.getMethod());
 
-        //Executing the Get request
         HttpResponse httpresponse = null;
         try {
             httpresponse = httpclient.execute(httpget);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        Gson gson=new Gson();
         Scanner sc = null;
         try {
             sc = new Scanner(httpresponse.getEntity().getContent());
@@ -43,32 +47,18 @@ public class RestClientServiceImpl implements RestClientService
             throw new RuntimeException(e);
         }
 
-        //Printing the status line
-        //System.out.println(httpresponse.getStatusLine());
-        //System.out.println(sc.nextLine());
-        JsonNode productNode = null;
+        String json = sc.nextLine();
+        JsonObject body = gson.fromJson(json, JsonObject.class);
+        String newstr = (body.get("data").toString());
+        PropertyDTO propertyDTO = new PropertyDTO();
         try {
-            productNode = new ObjectMapper().readTree(sc.nextLine());
+            propertyDTO = new ObjectMapper().readValue(newstr,PropertyDTO.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        PropertyDTO propertyDTO = new PropertyDTO();
-        propertyDTO.setPropertyId(productNode.get("data").get("id").textValue());
-        propertyDTO.setType(productNode.get("data").get("type").textValue());
-        propertyDTO.setDeposit(productNode.get("data").get("deposit").intValue());
-        propertyDTO.setLatitude(productNode.get("data").get("latitude").floatValue());
-        propertyDTO.setLongitude(productNode.get("data").get("longitude").floatValue());
-        propertyDTO.setLeaseType(productNode.get("data").get("leaseType").textValue());
-        propertyDTO.setParking(productNode.get("data").get("parking").textValue());
-        propertyDTO.setFurnishing(productNode.get("data").get("furnishing").textValue());
-        propertyDTO.setRent(productNode.get("data").get("rent").intValue());
-        propertyDTO.setBuildingType(productNode.get("data").get("buildingType").textValue());
+        propertyDTO.setPropertyId(propertyId);
+
         return (propertyDTO);
 
     }
-
-//    @Override
-//    public PropertyDTO getPropertyDetails(String propertyId) {
-//        return null;
-//    }
 }

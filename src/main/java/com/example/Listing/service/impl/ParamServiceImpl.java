@@ -1,8 +1,6 @@
 package com.example.Listing.service.impl;
 
-import com.example.Listing.loggingFolder.LoggingController;
-import com.example.Listing.model.MassModel;
-import com.example.Listing.model.ParamModel;
+import com.example.Listing.model.CoefficientModel;
 import com.example.Listing.repository.RepositoryParam.ParamRepository;
 import com.example.Listing.service.ParamService;
 import org.slf4j.Logger;
@@ -24,22 +22,20 @@ public class ParamServiceImpl  implements ParamService {
     private MongoTemplate mt;
     @Autowired
     private ParamRepository paramRepository;
-    Logger logger = LoggerFactory.getLogger(LoggingController.class);
+    Logger logger = LoggerFactory.getLogger(ParamServiceImpl.class);
     @Override
-    public ParamModel saveOrUpdateParam(ParamModel paramModel) {
-        if(paramRepository.findBycityId(paramModel.getCityId())!= null)
+    public CoefficientModel saveOrUpdateParam(CoefficientModel coefficientModel) {
+        if(paramRepository.findByCityId(coefficientModel.getCityId())!= null)
         {
-//            Query query = new Query();
-//            Update update = new Update().inc("paramType", paramModel.getParamType());
             Query query = new Query(
-                    Criteria.where("cityId").is(paramModel.getCityId()));
-            System.out.println(query);
-            Update update = new Update().set("paramType", paramModel.getParamType());
+                    Criteria.where("cityId").is(coefficientModel.getCityId()));
+            logger.error("query");
+            Update update = new Update().set("paramType", coefficientModel.getCoefficientType());
 
-            return mt.findAndModify(query, update, ParamModel.class);
+            return mt.findAndModify(query, update, CoefficientModel.class);
         }
         else {
-            return paramRepository.save(paramModel);
+            return paramRepository.save(coefficientModel);
         }
 
     }
@@ -50,15 +46,14 @@ public class ParamServiceImpl  implements ParamService {
     }
 
     @Override
-    public ParamModel findByCityId(String propertyId) {
+    public CoefficientModel findByCityId(String propertyId) {
 
-        ParamModel paramModel= paramRepository.findBycityId(propertyId);
-        if (paramModel != null) {
-            return paramModel;
+        CoefficientModel coefficientModel = paramRepository.findByCityId(propertyId);
+        if (coefficientModel != null) {
+            return coefficientModel;
         } else {
             logger.error("No property by this Id available. Please add the the property");
-            ParamModel placeHolder = new ParamModel();
-            return placeHolder;
+            return new CoefficientModel();
         }
 
     }

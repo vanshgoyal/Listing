@@ -1,12 +1,15 @@
 package com.example.Listing.controller;
 
-import com.example.Listing.dto.ParamDTO;
-import com.example.Listing.loggingFolder.LoggingController;
+import com.example.Listing.dto.CoefficientsDTO;
+import com.example.Listing.dto.PropertyDTO;
+import com.example.Listing.model.CoefficientModel;
+import com.example.Listing.model.FinalWeightModel;
 import com.example.Listing.model.MassModel;
-import com.example.Listing.model.ParamModel;
+import com.example.Listing.model.PropertyModel;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
 import com.example.Listing.service.ParamService;
 import com.example.Listing.service.PropertyService;
+import com.example.Listing.service.RestClientService;
 import com.example.Listing.service.SavePropertyScoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +21,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/property")
 public class PropertyRestController {
 
-    Logger logger = LoggerFactory.getLogger(LoggingController.class);
+    Logger logger = LoggerFactory.getLogger(PropertyRestController.class);
     @Autowired
     private PropertyService propertyService;
+    @Autowired
+    private RestClientService restClientService;
     @Autowired
     private SavePropertyScoreService savePropertyScoreService;
     @Autowired
@@ -40,6 +44,7 @@ public class PropertyRestController {
     public String  Home() throws Exception {
         return "Hello World";
     }
+
     @PostMapping (value = "/save/{id}/{propId}")
     public ResponseEntity<?> saveOrUpdatePropertyScore(@PathVariable("id") String cityId, @PathVariable("propId") String propertyId){
         MassModel massModel = propertyService.calculatePropertyScore(cityId, propertyId);
@@ -48,8 +53,8 @@ public class PropertyRestController {
     }
 
     @PostMapping (value = "/saveParam")
-    public ResponseEntity<?> saveOrUpdateParam(@RequestBody ParamDTO paramDTO) {
-        paramService.saveOrUpdateParam(ObjectMapperUtils.map(paramDTO, ParamModel.class));
+    public ResponseEntity<?> saveOrUpdateParam(@RequestBody CoefficientsDTO coefficientsDTO) {
+        paramService.saveOrUpdateParam(ObjectMapperUtils.map(coefficientsDTO, CoefficientModel.class));
         return new ResponseEntity("Param added successfully", HttpStatus.OK);
     }
 
@@ -57,9 +62,10 @@ public class PropertyRestController {
     public MassModel getPropertyMassById(@PathVariable("propId") String propId) {
         return ObjectMapperUtils.map(propertyService.findScoreBypropertyId(propId), MassModel.class);
     }
+
     @GetMapping(value = "/byParamId/{paramId}")
-    public ParamModel getParamById(@PathVariable("paramId") String paramId) {
-        return ObjectMapperUtils.map(paramService.findByCityId(paramId), ParamModel.class);
+    public CoefficientModel getParamById(@PathVariable("paramId") String paramId) {
+        return ObjectMapperUtils.map(paramService.findByCityId(paramId), CoefficientModel.class);
     }
 
     @DeleteMapping(value = "/deleteParam/{id}")
@@ -67,6 +73,7 @@ public class PropertyRestController {
         paramService.deleteParamModelById(paramService.findByCityId(cityId).getId());
         return new ResponseEntity("param deleted successfully", HttpStatus.OK);
     }
+
     @PutMapping(value = "/bulkUpdate")
     public void bulkUpdate (@RequestParam("batch") int batch)
     {
@@ -80,7 +87,7 @@ public class PropertyRestController {
         {
 
             try {
-                MassModel massModel = propertyService.calculatePropertyScore("1", it);
+                MassModel massModel = propertyService.calculatePropertyScore("3", it);
                 savePropertyScoreService.savePropertyMass(it, massModel);
             } catch (Exception e)
             {

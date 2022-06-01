@@ -1,8 +1,12 @@
 package com.example.Listing.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Getter
+@Setter
 @Document(collection = "properties")
 public class PropertyModel {
 
@@ -29,93 +33,6 @@ public class PropertyModel {
 
     private String buildingType;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPropertyId() {
-        return propertyId;
-    }
-
-    public void setPropertyId(String propertyId) {
-        this.propertyId = propertyId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public float getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
-    public float getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getLeaseType() {
-        return leaseType;
-    }
-
-    public void setLeaseType(String leaseType) {
-        this.leaseType = leaseType;
-    }
-
-    public String getParking() {
-        return parking;
-    }
-
-    public void setParking(String parking) {
-        this.parking = parking;
-    }
-
-    public String getFurnishing() {
-        return furnishing;
-    }
-
-    public void setFurnishing(String furnishing) {
-        this.furnishing = furnishing;
-    }
-
-    public int getRent() {
-        return rent;
-    }
-
-    public void setRent(int rent) {
-        this.rent = rent;
-    }
-
-    public int getDeposit() {
-        return deposit;
-    }
-
-    public void setDeposit(int deposit) {
-        this.deposit = deposit;
-    }
-
-    public String getBuildingType() {
-        return buildingType;
-    }
-
-    public void setBuildingType(String buildingType) {
-        this.buildingType = buildingType;
-    }
 
     public PropertyModel(){
 
