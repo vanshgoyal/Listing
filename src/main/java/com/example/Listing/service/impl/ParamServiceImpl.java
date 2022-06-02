@@ -30,7 +30,7 @@ public class ParamServiceImpl  implements ParamService {
             Query query = new Query(
                     Criteria.where("cityId").is(coefficientModel.getCityId()));
             logger.error("query");
-            Update update = new Update().set("paramType", coefficientModel.getCoefficientType());
+            Update update = new Update().set("paramType", coefficientModel.getType());
 
             return mt.findAndModify(query, update, CoefficientModel.class);
         }

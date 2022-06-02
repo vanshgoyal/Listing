@@ -17,23 +17,23 @@ public class CoefficientModel {
 
     private String cityId;
 
-    private Map<String, Float> coefficientType;
+    private float deposit;
 
-    private float coefficientLatitude;
+    private Map<String, Float> type;
 
-    private float coefficientLongitude;
+    private float latitude;
 
-    private Map<String, Float> coefficientLeaseType;
+    private float longitude;
 
-    private Map<String, Float> coefficientParking;
+    private Map<String, Float> leaseType;
 
-    private Map<String, Float> coefficientFurnishing;
+    private Map<String, Float> parking;
 
-    private float coefficientRent;
+    private Map<String, Float> furnishing;
 
-    private float coefficientDeposit;
+    private float rent;
 
-    private Map<String, Float> coefficientBuildingType;
+    private Map<String, Float> buildingType;
 
 
 
@@ -48,29 +48,29 @@ public class CoefficientModel {
         return "CoefficientModel{" +
                 "id='" + id + '\'' +
                 ", cityId='" + cityId + '\'' +
-                ", coefficientType=" + coefficientType +
-                ", coefficientLatitude=" + coefficientLatitude +
-                ", coefficientLongitude=" + coefficientLongitude +
-                ", coefficientLeaseType=" + coefficientLeaseType +
-                ", coefficientParking=" + coefficientParking +
-                ", coefficientFurnishing=" + coefficientFurnishing +
-                ", coefficientRent=" + coefficientRent +
-                ", coefficientDeposit=" + coefficientDeposit +
-                ", coefficientBuildingType=" + coefficientBuildingType +
+                ", deposit=" + deposit +
+                ", type=" + type +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", leaseType=" + leaseType +
+                ", parking=" + parking +
+                ", furnishing=" + furnishing +
+                ", rent=" + rent +
+                ", buildingType=" + buildingType +
                 '}';
     }
 
-    public CoefficientModel(String id, String cityId, Map<String, Float> coefficientType, float coefficientLatitude, float coefficientLongitude, Map<String, Float> coefficientLeaseType, Map<String, Float> coefficientParking, Map<String, Float> coefficientFurnishing, float coefficientRent, float coefficientDeposit, Map<String, Float> coefficientBuildingType) {
+    public CoefficientModel(String id, String cityId, Map<String, Float> type, float latitude, float longitude, Map<String, Float> leaseType, Map<String, Float> parking, Map<String, Float> furnishing, float rent, float deposit, Map<String, Float> buildingType) {
         this.id = id;
         this.cityId = cityId;
-        this.coefficientType = coefficientType;
-        this.coefficientLatitude = coefficientLatitude;
-        this.coefficientLongitude = coefficientLongitude;
-        this.coefficientLeaseType = coefficientLeaseType;
-        this.coefficientParking = coefficientParking;
-        this.coefficientFurnishing = coefficientFurnishing;
-        this.coefficientRent = coefficientRent;
-        this.coefficientDeposit = coefficientDeposit;
-        this.coefficientBuildingType = coefficientBuildingType;
+        this.type = type;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.leaseType = leaseType;
+        this.parking = parking;
+        this.furnishing = furnishing;
+        this.rent = rent;
+        this.deposit = deposit;
+        this.buildingType = buildingType;
     }
 }

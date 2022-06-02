@@ -26,24 +26,24 @@ public class RestClientServiceImpl implements RestClientService
     public PropertyDTO getPropertyDTO(String propertyId) {
 
         String uri = "https://www.nobroker.in/api/v1/property/"+propertyId;
-        // abstract this section of request creation and execute
         CloseableHttpClient httpclient = HttpClients.createDefault();
-
         HttpGet httpget = new HttpGet(uri);
-
-        System.out.println("Request Type: " + httpget.getMethod());
-
+        //System.out.println("Request Type: " + httpget.getMethod());
         HttpResponse httpresponse = null;
+
         try {
             httpresponse = httpclient.execute(httpget);
         } catch (IOException e) {
+            logger.error("Unable to get property params");
             throw new RuntimeException(e);
         }
+
         Gson gson=new Gson();
         Scanner sc = null;
         try {
             sc = new Scanner(httpresponse.getEntity().getContent());
         } catch (IOException e) {
+            logger.error("Unable to get response from property ");
             throw new RuntimeException(e);
         }
 

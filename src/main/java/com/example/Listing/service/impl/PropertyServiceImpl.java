@@ -1,7 +1,6 @@
 package com.example.Listing.service.impl;
 
 import com.example.Listing.dto.PropertyDTO;
-import com.example.Listing.model.FinalWeightModel;
 import com.example.Listing.model.MassModel;
 import com.example.Listing.model.CoefficientModel;
 import com.example.Listing.model.PropertyModel;
@@ -44,42 +43,17 @@ public class  PropertyServiceImpl implements PropertyService {
         } catch (Exception e) {
             logger.error("Unable to ind property for id :{}",propertyId);
             throw new RuntimeException(e.getMessage());
-
-
         }
+
         PropertyModel propertyParams = ObjectMapperUtils.map(propertyDTO, PropertyModel.class);
-        CoefficientModel paramModel = paramService.findByCityId(cityId);
-
-
-        FinalWeightModel finalWeightModel = ObjectMapperUtils.map(paramModel, FinalWeightModel.class);
-        //logger.error(String.valueOf(finalWeightModel.getDeposit()));
-        finalWeightModel.setDeposit(paramModel.getCoefficientDeposit());
-        finalWeightModel.setRent(paramModel.getCoefficientRent());
-        finalWeightModel.setLatitude(paramModel.getCoefficientLatitude());
-        finalWeightModel.setLongitude(paramModel.getCoefficientLongitude());
-        logger.error(String.valueOf(finalWeightModel.getDeposit()));
-
-        if(propertyParams.getType() != null) {
-            finalWeightModel.setType(paramModel.getCoefficientType().get(propertyParams.getType()));
-        }
-        if(propertyParams.getBuildingType() != null) {
-            finalWeightModel.setBuildingType(paramModel.getCoefficientBuildingType().get(propertyParams.getBuildingType()));
-        }
-
-        if(propertyParams.getFurnishing() != null) {
-            finalWeightModel.setFurnishing(paramModel.getCoefficientFurnishing().get(propertyParams.getFurnishing()));
-        }
-        //logger.error("55555555555555555555555555555555555555555555555555");
-        if(propertyParams.getParking() != null) {
-            finalWeightModel.setParking(paramModel.getCoefficientParking().get(propertyParams.getParking()));
-        }
-        //logger.error("55555555555555555555555555555555555555555555555555");
+        CoefficientModel propertyCoefficients = paramService.findByCityId(cityId);
         MassModel propertyMass = new MassModel();
 
         propertyMass.setPropertyId(propertyParams.getPropertyId());
-        propertyMass.setMassVal(ScoreCalculationService.QualityScore(propertyParams, finalWeightModel));
+        float quality_score = (ScoreCalculationService.QualityScore(propertyParams, propertyCoefficients));
+        float relevanceScore = (ScoreCalculationService.RelevanceScore(propertyParams, quality_score));
         // relevance score
-
+        propertyMass.setMassVal(relevanceScore);
         return propertyMass;
 
     }
@@ -90,7 +64,7 @@ public class  PropertyServiceImpl implements PropertyService {
         if (massModel != null) {
             return massModel;
         } else {
-            logger.error("No property by this Id available. Please add the the property");
+            logger.error("No Coefficients by this Id available. Please add the the coefficients");
             return new MassModel();
 
         }

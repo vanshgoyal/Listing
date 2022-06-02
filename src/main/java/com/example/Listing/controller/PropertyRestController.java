@@ -1,11 +1,8 @@
 package com.example.Listing.controller;
 
 import com.example.Listing.dto.CoefficientsDTO;
-import com.example.Listing.dto.PropertyDTO;
 import com.example.Listing.model.CoefficientModel;
-import com.example.Listing.model.FinalWeightModel;
 import com.example.Listing.model.MassModel;
-import com.example.Listing.model.PropertyModel;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
 import com.example.Listing.service.ParamService;
 import com.example.Listing.service.PropertyService;

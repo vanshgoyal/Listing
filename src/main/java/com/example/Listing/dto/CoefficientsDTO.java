@@ -15,23 +15,23 @@ public class CoefficientsDTO {
 
     private String cityId;
 
-    private Map<String, Float> coefficientType;
+    private float deposit;
 
-    private float coefficientLatitude;
+    private Map<String, Float> type;
 
-    private float coefficientLongitude;
+    private float latitude;
 
-    private float coefficientLeaseType;
+    private float longitude;
 
-    private float coefficientParking;
+    private Map<String, Float> leaseType;
 
-    private float coefficientFurnishing;
+    private Map<String, Float> parking;
 
-    private float coefficientRent;
+    private Map<String, Float> furnishing;
 
-    private float coefficientDeposit;
+    private float rent;
 
-    private float coefficientBuildingType;
+    private Map<String, Float> buildingType;
 
 
 
@@ -39,17 +39,17 @@ public class CoefficientsDTO {
     public CoefficientsDTO(){
     }
 
-    public CoefficientsDTO(String id, String cityId, Map<String, Float> coefficientType, float coefficientLatitude, float coefficientLongitude, float coefficientLeaseType, float coefficientParking, float coefficientFurnishing, float coefficientRent, float coefficientDeposit, float coefficientBuildingType, float coefficientLifestyle, float coefficientTransit, float coefficientPhotoCount) {
+    public CoefficientsDTO(String id, String cityId, float deposit, Map<String, Float> type, float latitude, float longitude, Map<String, Float> leaseType, Map<String, Float> parking, Map<String, Float> furnishing, float rent, Map<String, Float> buildingType) {
         this.id = id;
         this.cityId = cityId;
-        this.coefficientType = coefficientType;
-        this.coefficientLatitude = coefficientLatitude;
-        this.coefficientLongitude = coefficientLongitude;
-        this.coefficientLeaseType = coefficientLeaseType;
-        this.coefficientParking = coefficientParking;
-        this.coefficientFurnishing = coefficientFurnishing;
-        this.coefficientRent = coefficientRent;
-        this.coefficientDeposit = coefficientDeposit;
-        this.coefficientBuildingType = coefficientBuildingType;
+        this.deposit = deposit;
+        this.type = type;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.leaseType = leaseType;
+        this.parking = parking;
+        this.furnishing = furnishing;
+        this.rent = rent;
+        this.buildingType = buildingType;
     }
 }
