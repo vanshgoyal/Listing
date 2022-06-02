@@ -3,9 +3,9 @@ package com.example.Listing.service.impl;
 import com.example.Listing.dto.PropertyDTO;
 import com.example.Listing.service.RestClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -28,7 +28,6 @@ public class RestClientServiceImpl implements RestClientService
         String uri = "https://www.nobroker.in/api/v1/property/"+propertyId;
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpget = new HttpGet(uri);
-        //System.out.println("Request Type: " + httpget.getMethod());
         HttpResponse httpresponse = null;
 
         try {
@@ -50,9 +49,13 @@ public class RestClientServiceImpl implements RestClientService
         String json = sc.nextLine();
         JsonObject body = gson.fromJson(json, JsonObject.class);
         String newstr = (body.get("data").toString());
+        JsonObject body2 = gson.fromJson(newstr, JsonObject.class);
+        int photos = body2.getAsJsonArray("photos").size();
         PropertyDTO propertyDTO = new PropertyDTO();
         try {
             propertyDTO = new ObjectMapper().readValue(newstr,PropertyDTO.class);
+            propertyDTO.setNumberOfPhotos(photos);
+
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

@@ -33,6 +33,8 @@ public class PropertyDTO {
 
     private String buildingType;
 
+    private int numberOfPhotos;
+
     @Override
     public String toString() {
         return "PropertyModel{" +
@@ -47,6 +49,7 @@ public class PropertyDTO {
                 ", rent=" + rent +
                 ", deposit=" + deposit +
                 ", buildingType='" + buildingType + '\'' +
+                ", numberOfPhotos='" + numberOfPhotos + '\'' +
                 '}';
     }
 
@@ -54,7 +57,7 @@ public class PropertyDTO {
     public PropertyDTO(){
 
     }
-    public PropertyDTO(String id, String propertyId, String type, float latitude, float longitude, String leaseType, String parking, String furnishing, int rent, int deposit, String buildingType) {
+    public PropertyDTO(String id, String propertyId, String type, float latitude, float longitude, String leaseType, String parking, String furnishing, int rent, int deposit, String buildingType, int numberOfPhotos) {
         this.id = id;
         this.propertyId = propertyId;
         this.type = type;
@@ -66,5 +69,6 @@ public class PropertyDTO {
         this.rent = rent;
         this.deposit = deposit;
         this.buildingType = buildingType;
+        this.numberOfPhotos = numberOfPhotos;
     }
 }

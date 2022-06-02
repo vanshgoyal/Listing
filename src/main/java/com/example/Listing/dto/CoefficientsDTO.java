@@ -33,13 +33,13 @@ public class CoefficientsDTO {
 
     private Map<String, Float> buildingType;
 
-
+    private float numberOfPhotos;
 
 
     public CoefficientsDTO(){
     }
 
-    public CoefficientsDTO(String id, String cityId, float deposit, Map<String, Float> type, float latitude, float longitude, Map<String, Float> leaseType, Map<String, Float> parking, Map<String, Float> furnishing, float rent, Map<String, Float> buildingType) {
+    public CoefficientsDTO(String id, String cityId, float deposit, Map<String, Float> type, float latitude, float longitude, Map<String, Float> leaseType, Map<String, Float> parking, Map<String, Float> furnishing, float rent, Map<String, Float> buildingType, float numberOfPhotos) {
         this.id = id;
         this.cityId = cityId;
         this.deposit = deposit;
@@ -51,5 +51,6 @@ public class CoefficientsDTO {
         this.furnishing = furnishing;
         this.rent = rent;
         this.buildingType = buildingType;
+        this.numberOfPhotos = numberOfPhotos;
     }
 }

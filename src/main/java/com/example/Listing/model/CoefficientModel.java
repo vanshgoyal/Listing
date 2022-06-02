@@ -35,7 +35,7 @@ public class CoefficientModel {
 
     private Map<String, Float> buildingType;
 
-
+    private float numberOfPhotos;
 
 
 
@@ -57,10 +57,11 @@ public class CoefficientModel {
                 ", furnishing=" + furnishing +
                 ", rent=" + rent +
                 ", buildingType=" + buildingType +
+                ", numberOfPhotos='" + numberOfPhotos + '\'' +
                 '}';
     }
 
-    public CoefficientModel(String id, String cityId, Map<String, Float> type, float latitude, float longitude, Map<String, Float> leaseType, Map<String, Float> parking, Map<String, Float> furnishing, float rent, float deposit, Map<String, Float> buildingType) {
+    public CoefficientModel(String id, String cityId, Map<String, Float> type, float latitude, float longitude, Map<String, Float> leaseType, Map<String, Float> parking, Map<String, Float> furnishing, float rent, float deposit, Map<String, Float> buildingType, float numberOfPhotos) {
         this.id = id;
         this.cityId = cityId;
         this.type = type;
@@ -72,5 +73,6 @@ public class CoefficientModel {
         this.rent = rent;
         this.deposit = deposit;
         this.buildingType = buildingType;
+        this.numberOfPhotos = numberOfPhotos;
     }
 }

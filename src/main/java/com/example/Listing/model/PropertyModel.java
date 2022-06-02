@@ -33,11 +33,13 @@ public class PropertyModel {
 
     private String buildingType;
 
+    private int numberOfPhotos;
+
 
     public PropertyModel(){
 
     }
-    public PropertyModel(String id, String propertyId, String type, float latitude, float longitude, String leaseType, String parking, String furnishing, int rent, int deposit, String buildingType) {
+    public PropertyModel(String id, String propertyId, String type, float latitude, float longitude, String leaseType, String parking, String furnishing, int rent, int deposit, String buildingType, int numberOfPhotos) {
         this.id = id;
         this.propertyId = propertyId;
         this.type = type;
@@ -49,6 +51,7 @@ public class PropertyModel {
         this.rent = rent;
         this.deposit = deposit;
         this.buildingType = buildingType;
+        this.numberOfPhotos = numberOfPhotos;
     }
 
     @Override
@@ -65,6 +68,7 @@ public class PropertyModel {
                 ", rent=" + rent +
                 ", deposit=" + deposit +
                 ", buildingType='" + buildingType + '\'' +
+                ", numberOfPhotos='" + numberOfPhotos + '\'' +
                 '}';
     }
 }

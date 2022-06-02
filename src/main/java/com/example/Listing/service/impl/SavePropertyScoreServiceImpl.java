@@ -21,7 +21,7 @@ public class SavePropertyScoreServiceImpl implements SavePropertyScoreService {
     public void savePropertyMass(String propertyId, MassModel propertyMass){
         if(propertyRepository.findBypropertyId(propertyId)!= null)
         {
-            System.out.println("found");
+            System.out.println("Property with current Id already present. Updating Score.");
             Query query = new Query(
                     Criteria.where("propertyId").is(propertyId));
             Update update = new Update().set("massVal", propertyMass.getMassVal());

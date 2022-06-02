@@ -32,7 +32,7 @@ public class  PropertyServiceImpl implements PropertyService {
     private RestClientService restClientService;
     @Autowired
     private ParamService paramService;
-    Logger logger = LoggerFactory.getLogger(ParamServiceImpl.class);
+    Logger logger = LoggerFactory.getLogger(PropertyServiceImpl.class);
 
     @Override
 
@@ -50,12 +50,12 @@ public class  PropertyServiceImpl implements PropertyService {
         MassModel propertyMass = new MassModel();
 
         propertyMass.setPropertyId(propertyParams.getPropertyId());
-        float quality_score = (ScoreCalculationService.QualityScore(propertyParams, propertyCoefficients));
-        float relevanceScore = (ScoreCalculationService.RelevanceScore(propertyParams, quality_score));
-        // relevance score
+
+        float quality_score = (ScoreCalculationService.qualityScore(propertyParams, propertyCoefficients));
+        float relevanceScore = (ScoreCalculationService.relevanceScore(propertyParams, quality_score));
+
         propertyMass.setMassVal(relevanceScore);
         return propertyMass;
-
     }
 
     @Override

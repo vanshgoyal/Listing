@@ -5,10 +5,9 @@ import com.example.Listing.model.PropertyModel;
 
 public class ScoreCalculationService {
 
-        public static float QualityScore(PropertyModel propertyParams, CoefficientModel coefficientModel) {
-            int qualityScore=0;
+        public static float qualityScore(PropertyModel propertyParams, CoefficientModel coefficientModel) {
+            float qualityScore=0;
             if(propertyParams.getType() != null) {
-                System.out.println(coefficientModel.getType().get(propertyParams.getType()));
                 qualityScore+=(coefficientModel.getType().get(propertyParams.getType()));
             }
             if(propertyParams.getBuildingType() != null) {
@@ -18,7 +17,6 @@ public class ScoreCalculationService {
             if(propertyParams.getFurnishing() != null) {
                 qualityScore+=(coefficientModel.getFurnishing().get(propertyParams.getFurnishing()));
             }
-            //logger.error("55555555555555555555555555555555555555555555555555");
             try{
                 if(propertyParams.getParking() != null) {
                     qualityScore+=(coefficientModel.getParking().get(propertyParams.getParking()));
@@ -30,10 +28,11 @@ public class ScoreCalculationService {
             qualityScore+=propertyParams.getRent()*coefficientModel.getRent();
             qualityScore+=propertyParams.getLatitude()*coefficientModel.getLatitude();
             qualityScore+=propertyParams.getLongitude()*coefficientModel.getLongitude();
+            qualityScore+=propertyParams.getNumberOfPhotos()*coefficientModel.getNumberOfPhotos();
 
             return qualityScore;
         }
-        public static float RelevanceScore(PropertyModel propertyParams, float qualityScore)
+        public static float relevanceScore(PropertyModel propertyParams, float qualityScore)
         {
             return (float) (qualityScore+1000*Math.random());
         }
