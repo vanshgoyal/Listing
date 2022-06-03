@@ -9,6 +9,7 @@ import com.example.Listing.service.ParamService;
 import com.example.Listing.service.PropertyService;
 import com.example.Listing.service.ScoreCalculationService;
 import com.example.Listing.service.RestClientService;
+import com.example.Listing.service.SavePropertyScoreService;
 import com.example.Listing.utils.ObjectMapperUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
+
+import static com.example.Listing.service.QualityScoreCalculation.QualityScore;
+import static java.lang.Integer.parseInt;
 
 /**
  * @author ragcrix
@@ -33,6 +38,21 @@ public class  PropertyServiceImpl implements PropertyService {
     @Autowired
     private ParamService paramService;
     Logger logger = LoggerFactory.getLogger(PropertyServiceImpl.class);
+    @Autowired
+    private PropertyService propertyService;
+
+    @Autowired
+    private SavePropertyScoreService savePropertyScoreService;
+    Logger logger = LoggerFactory.getLogger(LoggingController.class);
+
+    public void executeBulkUpdate(ArrayList<MassModel> massModelArr, int i, int l)
+    {
+        for(;i<=l;i++)
+        {
+            MassModel massModel = propertyService.calculatePropertyScore("1", massModelArr.get(i).getPropertyId());
+            savePropertyScoreService.savePropertyMass(massModel.getPropertyId(), massModel);
+        }
+    }
 
     @Override
 

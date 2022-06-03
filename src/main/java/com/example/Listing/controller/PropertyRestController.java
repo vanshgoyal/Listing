@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 @RestController
@@ -75,12 +78,8 @@ public class PropertyRestController {
     public void bulkUpdate (@RequestParam("batch") int batch)
     {
         List<MassModel> PropArr = propertyRepository.findAll();
-        ArrayList<String> idArr = new ArrayList<String>();
-        for(MassModel it: PropArr)
-            idArr.add(it.getPropertyId());
-
-        ArrayList<Float> massArr = new ArrayList<Float>();
-        for(String it: idArr)
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        for(int i=0, l=PropArr.size();i<l;i+=batch)
         {
 
             try {
@@ -90,7 +89,10 @@ public class PropertyRestController {
             {
                 logger.error(e.getMessage());
             }
+            int finalI = i;
+            executorService.execute(()->{
+                propertyService.executeBulkUpdate((ArrayList<MassModel>)PropArr, finalI, Math.min(finalI+batch-1,l-1));
+            });
         }
-
     }
 }
