@@ -2,8 +2,8 @@ package com.example.Listing.service;
 
 import com.example.Listing.model.CoefficientModel;
 
-public interface ParamService {
-    CoefficientModel saveOrUpdateParam(CoefficientModel paramModel);
+public interface CoefficientService {
+    void saveOrUpdateCoefficient(CoefficientModel paramModel);
 
     void deleteParamModelById(String id);
 

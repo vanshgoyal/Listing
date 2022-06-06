@@ -7,3 +7,4 @@ public interface PropertyRepository extends MongoRepository<MassModel, String> {
 
     MassModel findBypropertyId(String propertyId);
 }
+

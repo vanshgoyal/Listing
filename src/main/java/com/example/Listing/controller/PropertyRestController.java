@@ -4,7 +4,7 @@ import com.example.Listing.dto.CoefficientsDTO;
 import com.example.Listing.model.CoefficientModel;
 import com.example.Listing.model.MassModel;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
-import com.example.Listing.service.ParamService;
+import com.example.Listing.service.CoefficientService;
 import com.example.Listing.service.PropertyService;
 import com.example.Listing.service.RestClientService;
 import com.example.Listing.service.SavePropertyScoreService;
@@ -34,7 +34,7 @@ public class PropertyRestController {
     @Autowired
     PropertyRepository propertyRepository;
     @Autowired
-    private ParamService paramService;
+    private CoefficientService coefficientService;
     private Class<? extends org.json.simple.JSONObject> JSONObject;
 
     @GetMapping(value = "/")
@@ -42,16 +42,23 @@ public class PropertyRestController {
         return "Hello World";
     }
 
-    @PostMapping (value = "/save/{id}/{propId}")
-    public ResponseEntity<?> saveOrUpdatePropertyScore(@PathVariable("id") String cityId, @PathVariable("propId") String propertyId){
-        MassModel massModel = propertyService.calculatePropertyScore(cityId, propertyId);
+    @PostMapping (value = "/saveQualityScore/{id}/{propId}")
+    public ResponseEntity<?> saveOrUpdateQualityScore(@PathVariable("id") String cityId, @PathVariable("propId") String propertyId){
+        MassModel massModel = propertyService.calculateQualityScore(cityId, propertyId);
+        savePropertyScoreService.savePropertyMass(propertyId, massModel);
+        return new ResponseEntity("PropertyModel added successfully", HttpStatus.OK);
+    }
+
+    @PostMapping (value = "/saveRelevanceScore/{propId}")
+    public ResponseEntity<?> saveOrUpdateRelevanceScore(@PathVariable("propId") String propertyId){
+        MassModel massModel = propertyService.calculateRelevanceScore(propertyId);
         savePropertyScoreService.savePropertyMass(propertyId, massModel);
         return new ResponseEntity("PropertyModel added successfully", HttpStatus.OK);
     }
 
     @PostMapping (value = "/saveParam")
     public ResponseEntity<?> saveOrUpdateParam(@RequestBody CoefficientsDTO coefficientsDTO) {
-        paramService.saveOrUpdateParam(ObjectMapperUtils.map(coefficientsDTO, CoefficientModel.class));
+        coefficientService.saveOrUpdateCoefficient(ObjectMapperUtils.map(coefficientsDTO, CoefficientModel.class));
         return new ResponseEntity("Param added successfully", HttpStatus.OK);
     }
 
@@ -62,12 +69,12 @@ public class PropertyRestController {
 
     @GetMapping(value = "/byParamId/{paramId}")
     public CoefficientModel getParamById(@PathVariable("paramId") String paramId) {
-        return ObjectMapperUtils.map(paramService.findByCityId(paramId), CoefficientModel.class);
+        return ObjectMapperUtils.map(coefficientService.findByCityId(paramId), CoefficientModel.class);
     }
 
     @DeleteMapping(value = "/deleteParam/{id}")
     public ResponseEntity<?> deleteParamByCityId(@PathVariable("id") String cityId) {
-        paramService.deleteParamModelById(paramService.findByCityId(cityId).getId());
+        coefficientService.deleteParamModelById(coefficientService.findByCityId(cityId).getId());
         return new ResponseEntity("param deleted successfully", HttpStatus.OK);
     }
 
@@ -84,7 +91,7 @@ public class PropertyRestController {
         {
 
             try {
-                MassModel massModel = propertyService.calculatePropertyScore("3", it);
+                MassModel massModel = propertyService.calculateQualityScore("3", it);
                 savePropertyScoreService.savePropertyMass(it, massModel);
             } catch (Exception e)
             {

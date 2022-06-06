@@ -17,6 +17,9 @@ public class ScoreCalculationService {
             if(propertyParams.getFurnishing() != null) {
                 qualityScore+=(coefficientModel.getFurnishing().get(propertyParams.getFurnishing()));
             }
+            if(propertyParams.getLeaseType() != null) {
+                qualityScore+=(coefficientModel.getLeaseType().get(propertyParams.getLeaseType()));
+            }
             try{
                 if(propertyParams.getParking() != null) {
                     qualityScore+=(coefficientModel.getParking().get(propertyParams.getParking()));

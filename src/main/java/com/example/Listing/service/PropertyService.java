@@ -4,7 +4,9 @@ import com.example.Listing.model.MassModel;
 
 public interface PropertyService {
 // rename to ScoringService
-    MassModel calculatePropertyScore(String cityId, String propertyId);
+    MassModel calculateQualityScore(String cityId, String propertyId);
+
+    MassModel calculateRelevanceScore(String propertyId);
 
     MassModel findScoreBypropertyId(String propertyId);
 }

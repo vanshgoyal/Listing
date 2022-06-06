@@ -5,7 +5,7 @@ import com.example.Listing.model.MassModel;
 import com.example.Listing.model.CoefficientModel;
 import com.example.Listing.model.PropertyModel;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
-import com.example.Listing.service.ParamService;
+import com.example.Listing.service.CoefficientService;
 import com.example.Listing.service.PropertyService;
 import com.example.Listing.service.ScoreCalculationService;
 import com.example.Listing.service.RestClientService;
@@ -31,29 +31,57 @@ public class  PropertyServiceImpl implements PropertyService {
     @Autowired
     private RestClientService restClientService;
     @Autowired
-    private ParamService paramService;
+    private CoefficientService coefficientService;
     Logger logger = LoggerFactory.getLogger(PropertyServiceImpl.class);
+
+    public PropertyServiceImpl() {
+    }
 
     @Override
 
-    public MassModel calculatePropertyScore(String cityId, String propertyId)  {
+    public MassModel calculateQualityScore(String cityId, String propertyId)  {
         PropertyDTO propertyDTO = null;
         try {
             propertyDTO = restClientService.getPropertyDTO(propertyId);
         } catch (Exception e) {
-            logger.error("Unable to ind property for id :{}",propertyId);
+            logger.error("Unable to find property for id :{}",propertyId);
             throw new RuntimeException(e.getMessage());
         }
 
         PropertyModel propertyParams = ObjectMapperUtils.map(propertyDTO, PropertyModel.class);
-        CoefficientModel propertyCoefficients = paramService.findByCityId(cityId);
+        CoefficientModel propertyCoefficients = coefficientService.findByCityId(cityId);
         MassModel propertyMass = new MassModel();
 
         propertyMass.setPropertyId(propertyParams.getPropertyId());
 
-        float quality_score = (ScoreCalculationService.qualityScore(propertyParams, propertyCoefficients));
-        float relevanceScore = (ScoreCalculationService.relevanceScore(propertyParams, quality_score));
+        float qualityScore = (ScoreCalculationService.qualityScore(propertyParams, propertyCoefficients));
 
+        propertyMass.setMassVal(qualityScore);
+        return propertyMass;
+    }
+
+    @Override
+    public MassModel calculateRelevanceScore(String propertyId)  {
+        PropertyDTO propertyDTO = null;
+        try {
+            propertyDTO = restClientService.getPropertyDTO(propertyId);
+        } catch (Exception e) {
+            logger.error("Unable to find property for id :{}",propertyId);
+            throw new RuntimeException(e.getMessage());
+        }
+        PropertyModel propertyParams = ObjectMapperUtils.map(propertyDTO, PropertyModel.class);
+
+        float qualityScore;
+        try {
+            qualityScore = findScoreBypropertyId(propertyId).getMassVal();
+        } catch (Exception e) {
+            logger.error("Unable to find property for id :{}",propertyId);
+            throw new RuntimeException(e.getMessage());
+        }
+
+        MassModel propertyMass = new MassModel();
+        propertyMass.setPropertyId(propertyId);
+        float relevanceScore = (ScoreCalculationService.relevanceScore(propertyParams, qualityScore));
         propertyMass.setMassVal(relevanceScore);
         return propertyMass;
     }
@@ -66,9 +94,6 @@ public class  PropertyServiceImpl implements PropertyService {
         } else {
             logger.error("No Coefficients by this Id available. Please add the the coefficients");
             return new MassModel();
-
         }
-
     }
-
 }
