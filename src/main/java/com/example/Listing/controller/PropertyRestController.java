@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 @RestController
@@ -42,11 +45,16 @@ public class PropertyRestController {
         return "Hello World";
     }
 
+    // propertyType for extensibility
     @PostMapping (value = "/saveQualityScore/{id}/{propId}")
     public ResponseEntity<?> saveOrUpdateQualityScore(@PathVariable("id") String cityId, @PathVariable("propId") String propertyId){
         MassModel massModel = propertyService.calculateQualityScore(cityId, propertyId);
+       if(massModel == null)
+       {
+           return new ResponseEntity("Property Id is incorrect", HttpStatus.NOT_FOUND);
+       }
         savePropertyScoreService.savePropertyMass(propertyId, massModel);
-        return new ResponseEntity("PropertyModel added successfully", HttpStatus.OK);
+        return new ResponseEntity(massModel, HttpStatus.OK);
     }
 
     @PostMapping (value = "/saveRelevanceScore/{propId}")
@@ -68,7 +76,7 @@ public class PropertyRestController {
     }
 
     @GetMapping(value = "/byParamId/{paramId}")
-    public CoefficientModel getParamById(@PathVariable("paramId") String paramId) {
+    public CoefficientModel getCoefficientByCityId(@PathVariable("paramId") String paramId) {
         return ObjectMapperUtils.map(coefficientService.findByCityId(paramId), CoefficientModel.class);
     }
 
@@ -79,25 +87,27 @@ public class PropertyRestController {
     }
 
     @PutMapping(value = "/bulkUpdate")
+    // output statistics with failure and success count
     public void bulkUpdate (@RequestParam("batch") int batch)
-    {
+    { // List<String> prpertyId ; cityId
         List<MassModel> PropArr = propertyRepository.findAll();
-        ArrayList<String> idArr = new ArrayList<String>();
-        for(MassModel it: PropArr)
-            idArr.add(it.getPropertyId());
-
-        ArrayList<Float> massArr = new ArrayList<Float>();
-        for(String it: idArr)
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        for(int i=0, l=PropArr.size();i<l;i+=batch)
         {
 
             try {
-                MassModel massModel = propertyService.calculateQualityScore("3", it);
-                savePropertyScoreService.savePropertyMass(it, massModel);
+                MassModel massModel = propertyService.calculateQualityScore("1", PropArr.get(i).getPropertyId()); // todo : relevance score
+                savePropertyScoreService.savePropertyMass(PropArr.get(i).getPropertyId(), massModel);
             } catch (Exception e)
             {
                 logger.error(e.getMessage());
             }
+            int finalI = i;
+            executorService.execute(()->{
+                propertyService.executeBulkUpdate((ArrayList<MassModel>)PropArr, finalI, Math.min(finalI+batch-1,l-1));
+            });
         }
 
     }
+
 }
