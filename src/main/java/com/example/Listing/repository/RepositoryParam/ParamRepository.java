@@ -7,6 +7,7 @@ public interface ParamRepository extends MongoRepository<CoefficientModel, Strin
 
 
     CoefficientModel findByCityId(String cityId);
+    // create an index on cityId
 
     void deleteParamModelById(String id);
 }

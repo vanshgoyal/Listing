@@ -1,6 +1,7 @@
 package com.example.Listing.service.impl;
 
 import com.example.Listing.dto.PropertyDTO;
+import com.example.Listing.exception.CustomException;
 import com.example.Listing.service.RestClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,10 +37,21 @@ public class RestClientServiceImpl implements RestClientService
     public PropertyDTO getPropertyDTO(String propertyId) {
 
         String uri = "https://www.nobroker.in/api/v1/property/"+propertyId;
-        Scanner sc = apiCallGet(uri);
-
+        Scanner sc;
+        try {
+             sc = apiCallGet(uri);
+        }
+        catch (Exception e){
+            logger.error("Rest Client Connection error");
+            throw new RuntimeException("Rest Client Connection error " + e.getMessage());
+        }
         Gson gson=new Gson();
         String json = sc.nextLine();
+        logger.error(json);
+        if(json.length() <400 ){
+            logger.error("Given Property id is not available, please send correct id to be searched ");
+            throw new java.util.NoSuchElementException("Given Property id is not available, please send correct id to be searched ");
+        }
         JsonObject body = gson.fromJson(json, JsonObject.class);
         String newstr = (body.get("data").toString());
         JsonObject body2 = gson.fromJson(newstr, JsonObject.class);
@@ -71,6 +83,7 @@ public class RestClientServiceImpl implements RestClientService
             throw new RuntimeException(e);
         }
         Scanner sc = null;
+        Scanner k =null;
         try {
             sc = new Scanner(httpresponse.getEntity().getContent());
         } catch (IOException e) {

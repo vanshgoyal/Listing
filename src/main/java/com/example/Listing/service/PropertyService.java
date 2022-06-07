@@ -11,6 +11,5 @@ public interface PropertyService {
     MassModel calculateRelevanceScore(String propertyId);
 
     MassModel findScoreBypropertyId(String propertyId);
-
     void executeBulkUpdate(ArrayList<MassModel> massModelArr, int i, int l);
 }

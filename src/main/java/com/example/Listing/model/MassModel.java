@@ -1,9 +1,11 @@
 package com.example.Listing.model;
 
+import lombok.Builder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "masses")
+@Builder
 public class MassModel {
     @Id
     private String id;
