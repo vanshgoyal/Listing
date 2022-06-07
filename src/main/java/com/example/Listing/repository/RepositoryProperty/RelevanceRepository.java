@@ -2,10 +2,11 @@ package com.example.Listing.repository.RepositoryProperty;
 
 import com.example.Listing.model.MassModel;
 import com.example.Listing.model.QualityScore;
+import com.example.Listing.model.RelevanceScore;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface PropertyRepository extends MongoRepository<QualityScore, String> {
+public interface RelevanceRepository extends MongoRepository<RelevanceScore, String> {
 
-    QualityScore findBypropertyId(String propertyId);
+    RelevanceScore findBypropertyId(String propertyId);
 }
 

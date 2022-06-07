@@ -5,6 +5,8 @@ import com.example.Listing.exception.ControllerException;
 import com.example.Listing.exception.CustomException;
 import com.example.Listing.model.CoefficientModel;
 import com.example.Listing.model.MassModel;
+import com.example.Listing.model.QualityScore;
+import com.example.Listing.model.RelevanceScore;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
 import com.example.Listing.service.CoefficientService;
 import com.example.Listing.service.PropertyService;
@@ -49,10 +51,11 @@ public class PropertyRestController {
 
     // propertyType for extensibility
     @PostMapping (value = "/saveQualityScore/{cityId}/{propId}")
-    public ResponseEntity<?> saveOrUpdateQualityScore(@PathVariable("cityId") String cityId, @PathVariable("propId") String propertyId){
-        MassModel massModel = new MassModel();
+    public ResponseEntity<?> saveOrUpdateQualityScore(@PathVariable("cityId") String cityId, @PathVariable("propId") String propertyId,@RequestParam("PType") String PType){
+        System.out.println(PType);
+        QualityScore qualityScore = new QualityScore();
         try {
-            massModel = propertyService.calculateQualityScore(cityId, propertyId);
+            qualityScore = propertyService.calculateQualityScore(cityId, propertyId, PType);
         }
         catch (CustomException e){
             return new ResponseEntity<CustomException>(e, HttpStatus.BAD_REQUEST);
@@ -62,16 +65,15 @@ public class PropertyRestController {
             ControllerException ce = new ControllerException("611","Something went wrong in controller");
             return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
         }
-        savePropertyScoreService.savePropertyMass(propertyId, massModel);
-        return new ResponseEntity(massModel, HttpStatus.OK);
+        savePropertyScoreService.savePropertyQualityScore(propertyId, qualityScore);
+        return new ResponseEntity(qualityScore, HttpStatus.OK);
     }
 
     @PostMapping (value = "/saveRelevanceScore/{propId}")
     public ResponseEntity<?> saveOrUpdateRelevanceScore(@PathVariable("propId") String propertyId){
-        //MassModel massModel = propertyService.calculateRelevanceScore(propertyId);
-        MassModel massModel = new MassModel();
+        RelevanceScore relevanceScore = new RelevanceScore();
         try {
-            massModel = propertyService.calculateRelevanceScore(propertyId);
+            relevanceScore = propertyService.calculateRelevanceScore(propertyId);
         }
         catch (CustomException e){
             return new ResponseEntity<CustomException>(e, HttpStatus.BAD_REQUEST);
@@ -81,8 +83,8 @@ public class PropertyRestController {
             ControllerException ce = new ControllerException("611","Something went wrong in controller");
             return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
         }
-        savePropertyScoreService.savePropertyMass(propertyId, massModel);
-        return new ResponseEntity(massModel, HttpStatus.OK);
+        savePropertyScoreService.savePropertyRelevanceScore(propertyId, relevanceScore);
+        return new ResponseEntity(relevanceScore, HttpStatus.OK);
     }
 
     @PostMapping (value = "/saveParam")
@@ -101,11 +103,28 @@ public class PropertyRestController {
 
     }
 
-    @GetMapping(value = "/byPropId/{propId}")
-    public ResponseEntity<?> getPropertyMassById(@PathVariable("propId") String propId) {
+    @GetMapping(value = "/qualityScorebyPropId/{propId}")
+    public ResponseEntity<?> getQualityScoreById(@PathVariable("propId") String propId) {
         try{
-            MassModel massModel =  ObjectMapperUtils.map(propertyService.findScoreBypropertyId(propId), MassModel.class);
-            return new ResponseEntity(massModel, HttpStatus.OK);
+            QualityScore qualityScore =  ObjectMapperUtils.map(propertyService.findQualityScoreBypropertyId(propId), QualityScore.class);
+            return new ResponseEntity(qualityScore, HttpStatus.OK);
+        }
+        catch (CustomException e) {
+            ControllerException ce = new ControllerException(e.getErrorCode(),e.getErrorMessage());
+            return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception e){
+            ControllerException ce = new ControllerException("607","No property with this id found");
+            return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @GetMapping(value = "/relevanceScorebyPropId/{propId}")
+    public ResponseEntity<?> getRelevanceScoreById(@PathVariable("propId") String propId) {
+        try{
+            RelevanceScore relevanceScore =  ObjectMapperUtils.map(propertyService.findRelevanceScoreBypropertyId(propId), RelevanceScore.class);
+            return new ResponseEntity(relevanceScore, HttpStatus.OK);
         }
         catch (CustomException e) {
             ControllerException ce = new ControllerException(e.getErrorCode(),e.getErrorMessage());
@@ -153,21 +172,22 @@ public class PropertyRestController {
     // output statistics with failure and success count
     public void bulkUpdate (@RequestParam("batch") int batch)
     { // List<String> prpertyId ; cityId
-        List<MassModel> PropArr = propertyRepository.findAll();
+        String PType = "Rent";
+        List<QualityScore> PropArr = propertyRepository.findAll();
         ExecutorService executorService = Executors.newCachedThreadPool();
         for(int i=0, l=PropArr.size();i<l;i+=batch)
         {
 
             try {
-                MassModel massModel = propertyService.calculateQualityScore("1", PropArr.get(i).getPropertyId()); // todo : relevance score
-                savePropertyScoreService.savePropertyMass(PropArr.get(i).getPropertyId(), massModel);
+                QualityScore qualityScore = propertyService.calculateQualityScore("1", PropArr.get(i).getPropertyId(),PType); // todo : relevance score
+                savePropertyScoreService.savePropertyQualityScore(PropArr.get(i).getPropertyId(), qualityScore);
             } catch (Exception e)
             {
                 logger.error(e.getMessage());
             }
             int finalI = i;
             executorService.execute(()->{
-                propertyService.executeBulkUpdate((ArrayList<MassModel>)PropArr, finalI, Math.min(finalI+batch-1,l-1));
+                propertyService.executeBulkUpdate((ArrayList<QualityScore>)PropArr, finalI, Math.min(finalI+batch-1,l-1));
             });
         }
 

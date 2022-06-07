@@ -2,10 +2,9 @@ package com.example.Listing.service.impl;
 
 import com.example.Listing.dto.PropertyDTO;
 import com.example.Listing.exception.CustomException;
-import com.example.Listing.model.MassModel;
-import com.example.Listing.model.CoefficientModel;
-import com.example.Listing.model.PropertyModel;
+import com.example.Listing.model.*;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
+import com.example.Listing.repository.RepositoryProperty.RelevanceRepository;
 import com.example.Listing.service.*;
 import com.example.Listing.utils.ObjectMapperUtils;
 import org.slf4j.Logger;
@@ -29,6 +28,8 @@ public class  PropertyServiceImpl implements PropertyService {
     private PropertyRepository propertyRepository;
 
     @Autowired
+    private RelevanceRepository relevanceRepository;
+    @Autowired
     private SavePropertyScoreService savePropertyScoreService;
     @Autowired
     private RestClientService restClientService;
@@ -39,16 +40,17 @@ public class  PropertyServiceImpl implements PropertyService {
     public PropertyServiceImpl() {
     }
 
-    public void executeBulkUpdate(ArrayList<MassModel> massModelArr, int i, int l)
+    public void executeBulkUpdate(ArrayList<QualityScore> massModelArr, int i, int l)
     {
+        String PType = "Rent";
         for(;i<=l;i++)
         {
-            MassModel massModel = calculateQualityScore("1", massModelArr.get(i).getPropertyId());
-            savePropertyScoreService.savePropertyMass(massModel.getPropertyId(), massModel);
+            QualityScore qualityScore = calculateQualityScore("1", massModelArr.get(i).getPropertyId(),PType);
+            savePropertyScoreService.savePropertyQualityScore(qualityScore.getPropertyId(), qualityScore);
         }
     }
     @Override
-    public MassModel calculateQualityScore(String cityId, String propertyId)  {
+    public QualityScore calculateQualityScore(String cityId, String propertyId, String PType)  {
         PropertyDTO propertyDTO = null;
         try {
             propertyDTO = restClientService.getPropertyDTO(propertyId);
@@ -69,14 +71,14 @@ public class  PropertyServiceImpl implements PropertyService {
 
         float qualityScore = (ScoreCalculationService.qualityScore(propertyParams, propertyCoefficients));
 
-        MassModel.MassModelBuilder builder = MassModel.builder();
+        QualityScore.QualityScoreBuilder builder = QualityScore.builder();
         builder.propertyId(propertyParams.getPropertyId());
-        builder.massVal(qualityScore);
+        builder.qualityScore(qualityScore);
         return builder.build();
     }
 
     @Override
-    public MassModel calculateRelevanceScore(String propertyId)  {
+    public RelevanceScore calculateRelevanceScore(String propertyId)  {
         PropertyDTO propertyDTO = null;
         try {
             propertyDTO = restClientService.getPropertyDTO(propertyId);
@@ -88,35 +90,50 @@ public class  PropertyServiceImpl implements PropertyService {
             logger.error("Given property id doesnot exist in DB :{}",propertyId);
             throw new CustomException("607","given Property id does not exist in DB "+propertyId+". " + e.getMessage());
         }catch (Exception e) {
-            logger.error("Something went wrong in Rest APi call layer while fetching QualityScore.:{}",propertyId);
-            throw new CustomException("609","Something went wrong in Service layer while fetching Quality Score of id " +propertyId+". " + e.getMessage());
+            logger.error("Something went wrong in Rest APi call layer while fetching Relevance score.:{}",propertyId);
+            throw new CustomException("609","Something went wrong in Service layer while fetching relevamce Score of id " +propertyId+". " + e.getMessage());
         }
 
         PropertyModel propertyParams = ObjectMapperUtils.map(propertyDTO, PropertyModel.class);
 
         float qualityScore;
         try {
-            qualityScore = findScoreBypropertyId(propertyId).getMassVal();
+            qualityScore = findQualityScoreBypropertyId(propertyId).getQualityScore();
         } catch (Exception e) {
             logger.error("Unable to find Quality Score for id :{}",propertyId);
             throw new CustomException("607","No quality score found for this Id "+e.getMessage());
         }
 
-        MassModel propertyMass = new MassModel();
-        propertyMass.setPropertyId(propertyId);
         float relevanceScore = (ScoreCalculationService.relevanceScore(propertyParams, qualityScore));
-        propertyMass.setMassVal(relevanceScore);
-        return propertyMass;
+
+        RelevanceScore.RelevanceScoreBuilder builder = RelevanceScore.builder();
+        builder.propertyId(propertyParams.getPropertyId());
+        builder.relevanceScore(relevanceScore);
+        return builder.build();
     }
 
     @Override
-    public MassModel findScoreBypropertyId(String propertyId) {
+    public QualityScore findQualityScoreBypropertyId(String propertyId) {
         if(propertyId.isEmpty() || propertyId.length() == 0 ) {
             throw new CustomException("601","Please send a proper property id");
         }
-        MassModel massModel = propertyRepository.findBypropertyId(propertyId);
-        if (massModel != null) {
-            return massModel;
+        QualityScore qualityScore = propertyRepository.findBypropertyId(propertyId);
+        if (qualityScore != null) {
+            return qualityScore;
+        } else {
+            logger.error("No property by this Id available. Please add the the property");
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public RelevanceScore findRelevanceScoreBypropertyId(String propertyId) {
+        if(propertyId.isEmpty() || propertyId.length() == 0 ) {
+            throw new CustomException("601","Please send a proper property id");
+        }
+        RelevanceScore relevanceScore = relevanceRepository.findBypropertyId(propertyId);
+        if (relevanceScore != null) {
+            return relevanceScore;
         } else {
             logger.error("No property by this Id available. Please add the the property");
             throw new RuntimeException();

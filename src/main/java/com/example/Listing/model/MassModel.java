@@ -41,7 +41,6 @@ public class MassModel {
     public MassModel(){
 
     }
-
     public MassModel(String id, String propertyId, float massVal) {
         this.id = id;
         this.propertyId = propertyId;
