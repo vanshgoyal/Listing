@@ -6,12 +6,7 @@ import com.example.Listing.model.MassModel;
 import com.example.Listing.model.CoefficientModel;
 import com.example.Listing.model.PropertyModel;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
-
-import com.example.Listing.service.CoefficientService;
-import com.example.Listing.service.PropertyService;
-import com.example.Listing.service.ScoreCalculationService;
-import com.example.Listing.service.RestClientService;
-import com.example.Listing.service.SavePropertyScoreService;
+import com.example.Listing.service.*;
 import com.example.Listing.utils.ObjectMapperUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +15,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+
 
 /**
  * @author ragcrix
@@ -39,22 +35,18 @@ public class  PropertyServiceImpl implements PropertyService {
     @Autowired
     private CoefficientService coefficientService;
     Logger logger = LoggerFactory.getLogger(PropertyServiceImpl.class);
-    @Autowired
-    private PropertyService propertyService;
 
+    public PropertyServiceImpl() {
+    }
 
     public void executeBulkUpdate(ArrayList<MassModel> massModelArr, int i, int l)
     {
         for(;i<=l;i++)
         {
-            MassModel massModel = propertyService.calculateQualityScore("1", massModelArr.get(i).getPropertyId());
+            MassModel massModel = calculateQualityScore("1", massModelArr.get(i).getPropertyId());
             savePropertyScoreService.savePropertyMass(massModel.getPropertyId(), massModel);
         }
     }
-
-    public PropertyServiceImpl() {
-    }
-
     @Override
     public MassModel calculateQualityScore(String cityId, String propertyId)  {
         PropertyDTO propertyDTO = null;
