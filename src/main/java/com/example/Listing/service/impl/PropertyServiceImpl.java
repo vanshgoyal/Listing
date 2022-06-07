@@ -1,6 +1,7 @@
 package com.example.Listing.service.impl;
 
 import com.example.Listing.dto.PropertyDTO;
+import com.example.Listing.exception.CustomException;
 import com.example.Listing.model.MassModel;
 import com.example.Listing.model.CoefficientModel;
 import com.example.Listing.model.PropertyModel;
@@ -51,18 +52,23 @@ public class  PropertyServiceImpl implements PropertyService {
         PropertyDTO propertyDTO = null;
         try {
             propertyDTO = restClientService.getPropertyDTO(propertyId);
-        } catch (Exception e) {
-            logger.error("Unable to find property for id :{}",propertyId);
-            return null; // throw a custom exception
+        } catch (IllegalArgumentException e) {
+            logger.error("given Property id is null, please send some id to be searched :{}",propertyId);
+            throw new CustomException("606","given employee id is null, please send some id to be searched" + e.getMessage());
+        }
+        catch (java.util.NoSuchElementException e){
+            logger.error("Given property id doesnot exist in DB :{}",propertyId);
+            throw new CustomException("607","given Property id does not exist in DB "+propertyId+". " + e.getMessage());
+        }catch (Exception e) {
+            logger.error("Something went wrong in Rest APi call layer while fetching QualityScore.:{}",propertyId);
+            throw new CustomException("609","Something went wrong in Service layer while fetching Quality Score of id " +propertyId+". " + e.getMessage());
         }
 
         PropertyModel propertyParams = ObjectMapperUtils.map(propertyDTO, PropertyModel.class);
         CoefficientModel propertyCoefficients = coefficientService.findByCityId(cityId);
 
-
         float qualityScore = (ScoreCalculationService.qualityScore(propertyParams, propertyCoefficients));
 
-//        propertyMass.setMassVal(qualityScore);
         MassModel.MassModelBuilder builder = MassModel.builder();
         builder.propertyId(propertyParams.getPropertyId());
         builder.massVal(qualityScore);
@@ -74,10 +80,18 @@ public class  PropertyServiceImpl implements PropertyService {
         PropertyDTO propertyDTO = null;
         try {
             propertyDTO = restClientService.getPropertyDTO(propertyId);
-        } catch (Exception e) {
-            logger.error("Unable to find property for id :{}",propertyId);
-            throw new RuntimeException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("given Property id is null, please send some id to be searched :{}",propertyId);
+            throw new CustomException("606","given employee id is null, please send some id to be searched" + e.getMessage());
         }
+        catch (java.util.NoSuchElementException e){
+            logger.error("Given property id doesnot exist in DB :{}",propertyId);
+            throw new CustomException("607","given Property id does not exist in DB "+propertyId+". " + e.getMessage());
+        }catch (Exception e) {
+            logger.error("Something went wrong in Rest APi call layer while fetching QualityScore.:{}",propertyId);
+            throw new CustomException("609","Something went wrong in Service layer while fetching Quality Score of id " +propertyId+". " + e.getMessage());
+        }
+
         PropertyModel propertyParams = ObjectMapperUtils.map(propertyDTO, PropertyModel.class);
 
         float qualityScore;
@@ -85,7 +99,7 @@ public class  PropertyServiceImpl implements PropertyService {
             qualityScore = findScoreBypropertyId(propertyId).getMassVal();
         } catch (Exception e) {
             logger.error("Unable to find Quality Score for id :{}",propertyId);
-            throw new RuntimeException(e.getMessage());
+            throw new CustomException("607","No quality score found for this Id "+e.getMessage());
         }
 
         MassModel propertyMass = new MassModel();
@@ -97,12 +111,15 @@ public class  PropertyServiceImpl implements PropertyService {
 
     @Override
     public MassModel findScoreBypropertyId(String propertyId) {
+        if(propertyId.isEmpty() || propertyId.length() == 0 ) {
+            throw new CustomException("601","Please send a proper property id");
+        }
         MassModel massModel = propertyRepository.findBypropertyId(propertyId);
         if (massModel != null) {
             return massModel;
         } else {
             logger.error("No property by this Id available. Please add the the property");
-            return new MassModel();
+            throw new RuntimeException();
         }
     }
 }
