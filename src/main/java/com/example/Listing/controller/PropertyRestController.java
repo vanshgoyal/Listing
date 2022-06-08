@@ -12,8 +12,6 @@ import com.example.Listing.service.PropertyService;
 import com.example.Listing.service.RestClientService;
 import com.example.Listing.service.SavePropertyScoreService;
 import com.example.Listing.utils.ObjectMapperUtils;
-import javafx.util.Pair;
-import jdk.nashorn.internal.codegen.CompilerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -181,14 +180,14 @@ public class PropertyRestController {
         public CallableImpl(List<QualityScore> qualityScores) {
             this.qualityScores = qualityScores;
         }
-        public Pair<Integer, Integer> call() throws Exception {
-            Pair<Integer, Integer> successFail = propertyService.executeBulkUpdate(qualityScores);
+        public AbstractMap.Entry<Integer, Integer> call() throws Exception {
+            AbstractMap.Entry<Integer, Integer> successFail = propertyService.executeBulkUpdate(qualityScores);
             return successFail;
         }
     }
     @PutMapping(value = "/bulkUpdate")
     // output statistics with failure and success count
-    public Pair<Integer, Integer> bulkUpdate (@RequestParam("batch") int batch) throws Exception
+    public AbstractMap.SimpleEntry<Integer, Integer> bulkUpdate (@RequestParam("batch") int batch) throws Exception
     {
         // List<String> prpertyId ; cityId
 //        String PType = "Rent";
@@ -206,11 +205,11 @@ public class PropertyRestController {
 
         for(int i=0;i<index;i++)
         {
-            Pair<Integer, Integer> pair = (Pair<Integer, Integer>) futureTasks.get(i).get();
+            AbstractMap.Entry<Integer, Integer> pair = (AbstractMap.Entry<Integer, Integer>) futureTasks.get(i).get();
             success+=pair.getKey();
             fail+=pair.getValue();
         }
 
-        return new Pair<>(success, fail);
+        return new AbstractMap.SimpleEntry<Integer, Integer>(success, fail);
     }
 }
