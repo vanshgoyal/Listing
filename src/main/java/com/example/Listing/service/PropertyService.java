@@ -4,6 +4,7 @@ import com.example.Listing.model.QualityScore;
 import com.example.Listing.model.RelevanceScore;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface PropertyService {
     // rename to ScoringService
@@ -16,6 +17,5 @@ public interface PropertyService {
     QualityScore findQualityScoreBypropertyId(String propertyId);
 
     RelevanceScore findRelevanceScoreBypropertyId(String propertyId);
-
-    void executeBulkUpdate(ArrayList<QualityScore> massModelArr, int i, int l);
+    void executeBulkUpdate(List<QualityScore> arr);
 }
