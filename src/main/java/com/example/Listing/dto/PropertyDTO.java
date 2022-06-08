@@ -34,12 +34,38 @@ public class PropertyDTO {
 
     private int numberOfPhotos;
 
+    private long activationDate;
+
+    private long numberOFContacts;
+
+    private boolean sponsored;
+    @Override
+    public String toString() {
+        return "PropertyDTO{" +
+                "id='" + id + '\'' +
+                ", propertyId='" + propertyId + '\'' +
+                ", type='" + type + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", leaseType='" + leaseType + '\'' +
+                ", parking='" + parking + '\'' +
+                ", furnishing='" + furnishing + '\'' +
+                ", rent=" + rent +
+                ", deposit=" + deposit +
+                ", buildingType='" + buildingType + '\'' +
+                ", numberOfPhotos=" + numberOfPhotos +
+                ", activationDate=" + activationDate +
+                ", numberOFContacts=" + numberOFContacts +
+                ", sponsored=" + sponsored +
+                '}';
+    }
+
+
     public PropertyDTO() {
 
     }
 
-
-    public PropertyDTO(String id, String propertyId, String type, float latitude, float longitude, String leaseType, String parking, String furnishing, int rent, int deposit, String buildingType, int numberOfPhotos) {
+    public PropertyDTO(String id, String propertyId, String type, float latitude, float longitude, String leaseType, String parking, String furnishing, int rent, int deposit, String buildingType, int numberOfPhotos, long activationDate, long numberOFContacts, boolean sponsored) {
         this.id = id;
         this.propertyId = propertyId;
         this.type = type;
@@ -52,23 +78,8 @@ public class PropertyDTO {
         this.deposit = deposit;
         this.buildingType = buildingType;
         this.numberOfPhotos = numberOfPhotos;
-    }
-
-    @Override
-    public String toString() {
-        return "PropertyModel{" +
-                "id='" + id + '\'' +
-                ", propertyId='" + propertyId + '\'' +
-                ", type='" + type + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", leaseType='" + leaseType + '\'' +
-                ", parking='" + parking + '\'' +
-                ", furnishing='" + furnishing + '\'' +
-                ", rent=" + rent +
-                ", deposit=" + deposit +
-                ", buildingType='" + buildingType + '\'' +
-                ", numberOfPhotos='" + numberOfPhotos + '\'' +
-                '}';
+        this.activationDate = activationDate;
+        this.numberOFContacts = numberOFContacts;
+        this.sponsored = sponsored;
     }
 }

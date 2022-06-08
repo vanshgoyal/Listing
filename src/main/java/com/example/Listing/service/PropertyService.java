@@ -17,5 +17,5 @@ public interface PropertyService {
     QualityScore findQualityScoreBypropertyId(String propertyId);
 
     RelevanceScore findRelevanceScoreBypropertyId(String propertyId);
-    void executeBulkUpdate(List<QualityScore> arr);
+    void executeBulkUpdate(List<RelevanceScore> arr);
 }

@@ -1,5 +1,4 @@
 package com.example.Listing.controller;
-
 import com.example.Listing.dto.CoefficientsDTO;
 import com.example.Listing.exception.ControllerException;
 import com.example.Listing.exception.CustomException;
@@ -7,6 +6,7 @@ import com.example.Listing.model.CoefficientModel;
 import com.example.Listing.model.QualityScore;
 import com.example.Listing.model.RelevanceScore;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
+import com.example.Listing.repository.RepositoryProperty.RelevanceRepository;
 import com.example.Listing.service.CoefficientService;
 import com.example.Listing.service.PropertyService;
 import com.example.Listing.service.RestClientService;
@@ -15,18 +15,12 @@ import com.example.Listing.utils.ObjectMapperUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.example.Listing.utils.ObjectMapperUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 
 @RestController
 @RequestMapping("/property")
@@ -37,6 +31,9 @@ public class PropertyRestController {
     PropertyRepository propertyRepository;
     @Autowired
     private PropertyService propertyService;
+
+    @Autowired
+    private RelevanceRepository relevanceRepository;
     @Autowired
     private RestClientService restClientService;
     @Autowired
@@ -47,7 +44,7 @@ public class PropertyRestController {
 
     @GetMapping(value = "/")
     public String Home() throws Exception {
-        return "Hello World";
+       return "Hello World";
     }
 
     // propertyType for extensibility
@@ -77,13 +74,12 @@ public class PropertyRestController {
             ControllerException ce = new ControllerException("611", "Something went wrong in controller");
             return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
         }
-        ResponseEntity responseEntity = savePropertyScoreService.savePropertyRelevanceScore(propertyId, relevanceScore);
+        savePropertyScoreService.savePropertyRelevanceScore(propertyId, relevanceScore);
         return new ResponseEntity(relevanceScore, HttpStatus.OK);
     }
 
     @PostMapping(value = "/saveOverAllScore/{cityId}/{propId}")
     public ResponseEntity<?> saveOrUpdateOverallRelevanceScore(@PathVariable("cityId") String cityId, @PathVariable("propId") String propertyId, @RequestParam("PType") String PType) {
-        System.out.println(PType);
         RelevanceScore relevanceScore = new RelevanceScore();
         try {
             relevanceScore = propertyService.calculateOverallScore(cityId, propertyId, PType);
@@ -93,7 +89,7 @@ public class PropertyRestController {
             ControllerException ce = new ControllerException("611", "Something went wrong in controller");
             return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
         }
-        ResponseEntity responseEntity = savePropertyScoreService.savePropertyRelevanceScore(propertyId, relevanceScore);
+        savePropertyScoreService.savePropertyRelevanceScore(propertyId, relevanceScore);
         return new ResponseEntity(relevanceScore, HttpStatus.OK);
     }
 
@@ -195,11 +191,12 @@ public class PropertyRestController {
 //            });
 //        }
         int pageNumber=0;
-        Page<QualityScore> page;
+        Page<RelevanceScore> page;
         do{
-            page = propertyRepository.findAll(PageRequest.of(pageNumber, batch));
-            List<QualityScore> PropArr = page.getContent();
+            page = relevanceRepository.findAll(PageRequest.of(pageNumber, batch));
+            List<RelevanceScore> PropArr = page.getContent();
             propertyService.executeBulkUpdate(PropArr);
+            pageNumber++;
         }while(!page.isLast());
     }
 

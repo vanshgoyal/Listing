@@ -43,10 +43,10 @@ public class PropertyServiceImpl implements PropertyService {
     public PropertyServiceImpl() {
     }
 
-    public void executeBulkUpdate(List<QualityScore> arr)
+    public void executeBulkUpdate(List<RelevanceScore> arr)
     {
         String PType = "Rent";
-        for(QualityScore curr: arr)
+        for(RelevanceScore curr: arr)
         {
             RelevanceScore relevanceScore = calculateRelevanceScore(curr.getPropertyId());
             savePropertyScoreService.savePropertyRelevanceScore(curr.getPropertyId(), relevanceScore);
@@ -106,7 +106,7 @@ public class PropertyServiceImpl implements PropertyService {
             throw new CustomException("607", "No quality score found for this Id " + e.getMessage());
         }
 
-        float relevanceScore = (ScoreCalculationService.relevanceScore(propertyParams, qualityScore));
+        float relevanceScore = (ScoreCalculationService.relevanceScoreForSponsored(propertyParams, qualityScore));
 
         RelevanceScore.RelevanceScoreBuilder builder = RelevanceScore.builder();
         builder.propertyId(propertyParams.getPropertyId());
