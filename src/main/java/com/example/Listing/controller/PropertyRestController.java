@@ -12,6 +12,8 @@ import com.example.Listing.service.PropertyService;
 import com.example.Listing.service.RestClientService;
 import com.example.Listing.service.SavePropertyScoreService;
 import com.example.Listing.utils.ObjectMapperUtils;
+import javafx.util.Pair;
+import jdk.nashorn.internal.codegen.CompilerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 
 @RestController
@@ -171,36 +175,42 @@ public class PropertyRestController {
             return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
         }
     }
+    private class CallableImpl implements Callable {
+        List<QualityScore> qualityScores;
 
+        public CallableImpl(List<QualityScore> qualityScores) {
+            this.qualityScores = qualityScores;
+        }
+        public Pair<Integer, Integer> call() throws Exception {
+            Pair<Integer, Integer> successFail = propertyService.executeBulkUpdate(qualityScores);
+            return successFail;
+        }
+    }
     @PutMapping(value = "/bulkUpdate")
     // output statistics with failure and success count
-    public void bulkUpdate (@RequestParam("batch") int batch)
-    { // List<String> prpertyId ; cityId
+    public Pair<Integer, Integer> bulkUpdate (@RequestParam("batch") int batch) throws Exception
+    {
+        // List<String> prpertyId ; cityId
 //        String PType = "Rent";
-//        List<QualityScore> PropArr = propertyRepository.findAll();
-//        ExecutorService executorService = Executors.newCachedThreadPool();
-//        for(int i=0, l=PropArr.size();i<l;i+=batch)
-//        {
-//
-//            try {
-//                QualityScore qualityScore = propertyService.calculateQualityScore("1", PropArr.get(i).getPropertyId(),PType); // todo : relevance score
-//                savePropertyScoreService.savePropertyQualityScore(PropArr.get(i).getPropertyId(), qualityScore);
-//            } catch (Exception e)
-//            {
-//                logger.error(e.getMessage());
-//            }
-//            int finalI = i;
-//            executorService.execute(()->{
-//                propertyService.executeBulkUpdate((ArrayList<QualityScore>)PropArr, finalI, Math.min(finalI+batch-1,l-1));
-//            });
-//        }
-        int pageNumber=0;
+        int pageNumber=0, index=0, success=0, fail=0;
         Page<QualityScore> page;
+        ArrayList<FutureTask> futureTasks = new ArrayList<>();
         do{
             page = propertyRepository.findAll(PageRequest.of(pageNumber, batch));
             List<QualityScore> PropArr = page.getContent();
-            propertyService.executeBulkUpdate(PropArr);
+            Callable callable = new CallableImpl(PropArr);
+            futureTasks.add(new FutureTask(callable));
+            Thread t = new Thread(futureTasks.get(index++));
+            t.start();
         }while(!page.isLast());
-    }
 
+        for(int i=0;i<index;i++)
+        {
+            Pair<Integer, Integer> pair = (Pair<Integer, Integer>) futureTasks.get(i).get();
+            success+=pair.getKey();
+            fail+=pair.getValue();
+        }
+
+        return new Pair<>(success, fail);
+    }
 }

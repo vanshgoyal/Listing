@@ -10,13 +10,15 @@ import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
 import com.example.Listing.repository.RepositoryProperty.RelevanceRepository;
 import com.example.Listing.service.*;
 import com.example.Listing.utils.ObjectMapperUtils;
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,14 +45,20 @@ public class PropertyServiceImpl implements PropertyService {
     public PropertyServiceImpl() {
     }
 
-    public void executeBulkUpdate(List<QualityScore> arr)
+    public Pair<Integer, Integer> executeBulkUpdate(List<QualityScore> arr)
     {
         String PType = "Rent";
+        int success=0, fail=0;
         for(QualityScore curr: arr)
         {
             RelevanceScore relevanceScore = calculateRelevanceScore(curr.getPropertyId());
-            savePropertyScoreService.savePropertyRelevanceScore(curr.getPropertyId(), relevanceScore);
+            ResponseEntity<?> res =  savePropertyScoreService.savePropertyRelevanceScore(curr.getPropertyId(), relevanceScore);
+            if(res.getStatusCode()== HttpStatus.OK)
+                success++;
+            else
+                fail++;
         }
+        return new Pair(success, fail);
     }
 
     @Override
