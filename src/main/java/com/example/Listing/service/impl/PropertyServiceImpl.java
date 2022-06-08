@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -42,11 +43,13 @@ public class PropertyServiceImpl implements PropertyService {
     public PropertyServiceImpl() {
     }
 
-    public void executeBulkUpdate(ArrayList<QualityScore> massModelArr, int i, int l) {
+    public void executeBulkUpdate(List<QualityScore> arr)
+    {
         String PType = "Rent";
-        for (; i <= l; i++) {
-            QualityScore qualityScore = calculateQualityScore("1", massModelArr.get(i).getPropertyId(), PType);
-            savePropertyScoreService.savePropertyQualityScore(qualityScore.getPropertyId(), qualityScore);
+        for(QualityScore curr: arr)
+        {
+            RelevanceScore relevanceScore = calculateRelevanceScore(curr.getPropertyId());
+            savePropertyScoreService.savePropertyRelevanceScore(curr.getPropertyId(), relevanceScore);
         }
     }
 
