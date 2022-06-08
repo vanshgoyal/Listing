@@ -36,7 +36,7 @@ public class CoefficientsDTO {
     private float numberOfPhotos;
 
 
-    public CoefficientsDTO(){
+    public CoefficientsDTO() {
     }
 
     public CoefficientsDTO(String id, String cityId, float deposit, Map<String, Float> type, float latitude, float longitude, Map<String, Float> leaseType, Map<String, Float> parking, Map<String, Float> furnishing, float rent, Map<String, Float> buildingType, float numberOfPhotos) {

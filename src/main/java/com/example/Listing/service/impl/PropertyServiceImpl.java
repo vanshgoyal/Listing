@@ -2,7 +2,10 @@ package com.example.Listing.service.impl;
 
 import com.example.Listing.dto.PropertyDTO;
 import com.example.Listing.exception.CustomException;
-import com.example.Listing.model.*;
+import com.example.Listing.model.CoefficientModel;
+import com.example.Listing.model.PropertyModel;
+import com.example.Listing.model.QualityScore;
+import com.example.Listing.model.RelevanceScore;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
 import com.example.Listing.repository.RepositoryProperty.RelevanceRepository;
 import com.example.Listing.service.*;
@@ -20,13 +23,13 @@ import java.util.ArrayList;
  * @author ragcrix
  */
 @Service
-public class  PropertyServiceImpl implements PropertyService {
+public class PropertyServiceImpl implements PropertyService {
 
+    Logger logger = LoggerFactory.getLogger(PropertyServiceImpl.class);
     @Autowired
     private MongoTemplate mt;
     @Autowired
     private PropertyRepository propertyRepository;
-
     @Autowired
     private RelevanceRepository relevanceRepository;
     @Autowired
@@ -35,35 +38,32 @@ public class  PropertyServiceImpl implements PropertyService {
     private RestClientService restClientService;
     @Autowired
     private CoefficientService coefficientService;
-    Logger logger = LoggerFactory.getLogger(PropertyServiceImpl.class);
 
     public PropertyServiceImpl() {
     }
 
-    public void executeBulkUpdate(ArrayList<QualityScore> massModelArr, int i, int l)
-    {
+    public void executeBulkUpdate(ArrayList<QualityScore> massModelArr, int i, int l) {
         String PType = "Rent";
-        for(;i<=l;i++)
-        {
-            QualityScore qualityScore = calculateQualityScore("1", massModelArr.get(i).getPropertyId(),PType);
+        for (; i <= l; i++) {
+            QualityScore qualityScore = calculateQualityScore("1", massModelArr.get(i).getPropertyId(), PType);
             savePropertyScoreService.savePropertyQualityScore(qualityScore.getPropertyId(), qualityScore);
         }
     }
+
     @Override
-    public QualityScore calculateQualityScore(String cityId, String propertyId, String PType)  {
+    public QualityScore calculateQualityScore(String cityId, String propertyId, String PType) {
         PropertyDTO propertyDTO = null;
         try {
             propertyDTO = restClientService.getPropertyDTO(propertyId);
         } catch (IllegalArgumentException e) {
-            logger.error("given Property id is null, please send some id to be searched :{}",propertyId);
-            throw new CustomException("606","given employee id is null, please send some id to be searched" + e.getMessage());
-        }
-        catch (java.util.NoSuchElementException e){
-            logger.error("Given property id doesnot exist in DB :{}",propertyId);
-            throw new CustomException("607","given Property id does not exist in DB "+propertyId+". " + e.getMessage());
-        }catch (Exception e) {
-            logger.error("Something went wrong in Rest APi call layer while fetching QualityScore.:{}",propertyId);
-            throw new CustomException("609","Something went wrong in Service layer while fetching Quality Score of id " +propertyId+". " + e.getMessage());
+            logger.error("given Property id is null, please send some id to be searched :{}", propertyId);
+            throw new CustomException("606", "given employee id is null, please send some id to be searched" + e.getMessage());
+        } catch (java.util.NoSuchElementException e) {
+            logger.error("Given property id doesnot exist in DB :{}", propertyId);
+            throw new CustomException("607", "given Property id does not exist in DB " + propertyId + ". " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("Something went wrong in Rest APi call layer while fetching QualityScore.:{}", propertyId);
+            throw new CustomException("609", "Something went wrong in Service layer while fetching Quality Score of id " + propertyId + ". " + e.getMessage());
         }
 
         PropertyModel propertyParams = ObjectMapperUtils.map(propertyDTO, PropertyModel.class);
@@ -78,20 +78,19 @@ public class  PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public RelevanceScore calculateRelevanceScore(String propertyId)  {
+    public RelevanceScore calculateRelevanceScore(String propertyId) {
         PropertyDTO propertyDTO = null;
         try {
             propertyDTO = restClientService.getPropertyDTO(propertyId);
         } catch (IllegalArgumentException e) {
-            logger.error("given Property id is null, please send some id to be searched :{}",propertyId);
-            throw new CustomException("606","given employee id is null, please send some id to be searched" + e.getMessage());
-        }
-        catch (java.util.NoSuchElementException e){
-            logger.error("Given property id doesnot exist in DB :{}",propertyId);
-            throw new CustomException("607","given Property id does not exist in DB "+propertyId+". " + e.getMessage());
-        }catch (Exception e) {
-            logger.error("Something went wrong in Rest APi call layer while fetching Relevance score.:{}",propertyId);
-            throw new CustomException("609","Something went wrong in Service layer while fetching relevamce Score of id " +propertyId+". " + e.getMessage());
+            logger.error("given Property id is null, please send some id to be searched :{}", propertyId);
+            throw new CustomException("606", "given employee id is null, please send some id to be searched" + e.getMessage());
+        } catch (java.util.NoSuchElementException e) {
+            logger.error("Given property id doesnot exist in DB :{}", propertyId);
+            throw new CustomException("607", "given Property id does not exist in DB " + propertyId + ". " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("Something went wrong in Rest APi call layer while fetching Relevance score.:{}", propertyId);
+            throw new CustomException("609", "Something went wrong in Service layer while fetching relevamce Score of id " + propertyId + ". " + e.getMessage());
         }
 
         PropertyModel propertyParams = ObjectMapperUtils.map(propertyDTO, PropertyModel.class);
@@ -100,8 +99,8 @@ public class  PropertyServiceImpl implements PropertyService {
         try {
             qualityScore = findQualityScoreBypropertyId(propertyId).getQualityScore();
         } catch (Exception e) {
-            logger.error("Unable to find Quality Score for id :{}",propertyId);
-            throw new CustomException("607","No quality score found for this Id "+e.getMessage());
+            logger.error("Unable to find Quality Score for id :{}", propertyId);
+            throw new CustomException("607", "No quality score found for this Id " + e.getMessage());
         }
 
         float relevanceScore = (ScoreCalculationService.relevanceScore(propertyParams, qualityScore));
@@ -113,9 +112,38 @@ public class  PropertyServiceImpl implements PropertyService {
     }
 
     @Override
+    public RelevanceScore calculateOverallScore(String cityId, String propertyId, String PType) {
+        PropertyDTO propertyDTO = null;
+        try {
+            propertyDTO = restClientService.getPropertyDTO(propertyId);
+        } catch (IllegalArgumentException e) {
+            logger.error("given Property id is null, please send some id to be searched :{}", propertyId);
+            throw new CustomException("606", "given employee id is null, please send some id to be searched" + e.getMessage());
+        } catch (java.util.NoSuchElementException e) {
+            logger.error("Given property id doesnot exist in DB :{}", propertyId);
+            throw new CustomException("607", "given Property id does not exist in DB " + propertyId + ". " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("Something went wrong in Rest APi call layer while fetching QualityScore.:{}", propertyId);
+            throw new CustomException("609", "Something went wrong in Service layer while fetching Quality Score of id " + propertyId + ". " + e.getMessage());
+        }
+
+        PropertyModel propertyParams = ObjectMapperUtils.map(propertyDTO, PropertyModel.class);
+        CoefficientModel propertyCoefficients = coefficientService.findByCityId(cityId);
+
+        float qualityScore = (ScoreCalculationService.qualityScore(propertyParams, propertyCoefficients));
+
+        float relevanceScore = (ScoreCalculationService.relevanceScore(propertyParams, qualityScore));
+
+        RelevanceScore.RelevanceScoreBuilder builder = RelevanceScore.builder();
+        builder.propertyId(propertyParams.getPropertyId());
+        builder.relevanceScore(relevanceScore);
+        return builder.build();
+    }
+
+    @Override
     public QualityScore findQualityScoreBypropertyId(String propertyId) {
-        if(propertyId.isEmpty() || propertyId.length() == 0 ) {
-            throw new CustomException("601","Please send a proper property id");
+        if (propertyId.isEmpty() || propertyId.length() == 0) {
+            throw new CustomException("601", "Please send a proper property id");
         }
         QualityScore qualityScore = propertyRepository.findBypropertyId(propertyId);
         if (qualityScore != null) {
@@ -128,8 +156,8 @@ public class  PropertyServiceImpl implements PropertyService {
 
     @Override
     public RelevanceScore findRelevanceScoreBypropertyId(String propertyId) {
-        if(propertyId.isEmpty() || propertyId.length() == 0 ) {
-            throw new CustomException("601","Please send a proper property id");
+        if (propertyId.isEmpty() || propertyId.length() == 0) {
+            throw new CustomException("601", "Please send a proper property id");
         }
         RelevanceScore relevanceScore = relevanceRepository.findBypropertyId(propertyId);
         if (relevanceScore != null) {

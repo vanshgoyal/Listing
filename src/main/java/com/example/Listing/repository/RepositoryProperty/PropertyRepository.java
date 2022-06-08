@@ -1,6 +1,5 @@
 package com.example.Listing.repository.RepositoryProperty;
 
-import com.example.Listing.model.MassModel;
 import com.example.Listing.model.QualityScore;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

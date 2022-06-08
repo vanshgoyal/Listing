@@ -18,7 +18,7 @@ public class RelevanceScore {
 
     private float relevanceScore;
 
-    public RelevanceScore(){
+    public RelevanceScore() {
 
     }
 

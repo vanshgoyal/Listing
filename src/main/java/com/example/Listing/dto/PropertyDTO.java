@@ -1,6 +1,5 @@
 package com.example.Listing.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +22,7 @@ public class PropertyDTO {
 
     private String leaseType;
 
-    private String  parking;
+    private String parking;
 
     private String furnishing;
 
@@ -34,6 +33,26 @@ public class PropertyDTO {
     private String buildingType;
 
     private int numberOfPhotos;
+
+    public PropertyDTO() {
+
+    }
+
+
+    public PropertyDTO(String id, String propertyId, String type, float latitude, float longitude, String leaseType, String parking, String furnishing, int rent, int deposit, String buildingType, int numberOfPhotos) {
+        this.id = id;
+        this.propertyId = propertyId;
+        this.type = type;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.leaseType = leaseType;
+        this.parking = parking;
+        this.furnishing = furnishing;
+        this.rent = rent;
+        this.deposit = deposit;
+        this.buildingType = buildingType;
+        this.numberOfPhotos = numberOfPhotos;
+    }
 
     @Override
     public String toString() {
@@ -51,24 +70,5 @@ public class PropertyDTO {
                 ", buildingType='" + buildingType + '\'' +
                 ", numberOfPhotos='" + numberOfPhotos + '\'' +
                 '}';
-    }
-
-
-    public PropertyDTO(){
-
-    }
-    public PropertyDTO(String id, String propertyId, String type, float latitude, float longitude, String leaseType, String parking, String furnishing, int rent, int deposit, String buildingType, int numberOfPhotos) {
-        this.id = id;
-        this.propertyId = propertyId;
-        this.type = type;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.leaseType = leaseType;
-        this.parking = parking;
-        this.furnishing = furnishing;
-        this.rent = rent;
-        this.deposit = deposit;
-        this.buildingType = buildingType;
-        this.numberOfPhotos = numberOfPhotos;
     }
 }
