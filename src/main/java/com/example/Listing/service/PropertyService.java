@@ -3,7 +3,7 @@ package com.example.Listing.service;
 import com.example.Listing.model.QualityScore;
 import com.example.Listing.model.RelevanceScore;
 
-import java.util.ArrayList;
+import java.util.AbstractMap;
 import java.util.List;
 
 public interface PropertyService {
@@ -17,5 +17,5 @@ public interface PropertyService {
     QualityScore findQualityScoreBypropertyId(String propertyId);
 
     RelevanceScore findRelevanceScoreBypropertyId(String propertyId);
-    void executeBulkUpdate(List<RelevanceScore> arr);
+    AbstractMap.Entry<Integer, Integer> executeBulkUpdate(List<QualityScore> arr);
 }

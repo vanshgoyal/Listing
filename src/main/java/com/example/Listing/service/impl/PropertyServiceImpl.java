@@ -14,9 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.AbstractMap;
 import java.util.List;
 
 
@@ -43,14 +45,21 @@ public class PropertyServiceImpl implements PropertyService {
     public PropertyServiceImpl() {
     }
 
-    public void executeBulkUpdate(List<RelevanceScore> arr)
+
+    public AbstractMap.SimpleEntry<Integer, Integer> executeBulkUpdate(List<QualityScore> arr)
     {
         String PType = "Rent";
-        for(RelevanceScore curr: arr)
+        int success=0, fail=0;
+        for(QualityScore curr: arr)
         {
             RelevanceScore relevanceScore = calculateRelevanceScore(curr.getPropertyId());
-            savePropertyScoreService.savePropertyRelevanceScore(curr.getPropertyId(), relevanceScore);
+            ResponseEntity<?> res =  savePropertyScoreService.savePropertyRelevanceScore(curr.getPropertyId(), relevanceScore);
+            if(res.getStatusCode()== HttpStatus.OK)
+                success++;
+            else
+                fail++;
         }
+        return new AbstractMap.SimpleEntry<Integer, Integer>(success, fail);
     }
 
     @Override

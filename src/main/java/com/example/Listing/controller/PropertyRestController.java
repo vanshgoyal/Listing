@@ -20,7 +20,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+
+
 
 @RestController
 @RequestMapping("/property")
@@ -167,37 +176,43 @@ public class PropertyRestController {
             return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
         }
     }
+    private class CallableImpl implements Callable {
+        List<QualityScore> qualityScores;
 
+        public CallableImpl(List<QualityScore> qualityScores) {
+            this.qualityScores = qualityScores;
+        }
+        public AbstractMap.Entry<Integer, Integer> call() throws Exception {
+            AbstractMap.Entry<Integer, Integer> successFail = propertyService.executeBulkUpdate(qualityScores);
+            return successFail;
+        }
+    }
     @PutMapping(value = "/bulkUpdate")
     // output statistics with failure and success count
-    public void bulkUpdate (@RequestParam("batch") int batch)
-    { // List<String> prpertyId ; cityId
+    public AbstractMap.SimpleEntry<Integer, Integer> bulkUpdate (@RequestParam("batch") int batch) throws Exception
+    {
+        // List<String> prpertyId ; cityId
 //        String PType = "Rent";
-//        List<QualityScore> PropArr = propertyRepository.findAll();
-//        ExecutorService executorService = Executors.newCachedThreadPool();
-//        for(int i=0, l=PropArr.size();i<l;i+=batch)
-//        {
-//
-//            try {
-//                QualityScore qualityScore = propertyService.calculateQualityScore("1", PropArr.get(i).getPropertyId(),PType); // todo : relevance score
-//                savePropertyScoreService.savePropertyQualityScore(PropArr.get(i).getPropertyId(), qualityScore);
-//            } catch (Exception e)
-//            {
-//                logger.error(e.getMessage());
-//            }
-//            int finalI = i;
-//            executorService.execute(()->{
-//                propertyService.executeBulkUpdate((ArrayList<QualityScore>)PropArr, finalI, Math.min(finalI+batch-1,l-1));
-//            });
-//        }
-        int pageNumber=0;
-        Page<RelevanceScore> page;
-        do{
-            page = relevanceRepository.findAll(PageRequest.of(pageNumber, batch));
-            List<RelevanceScore> PropArr = page.getContent();
-            propertyService.executeBulkUpdate(PropArr);
-            pageNumber++;
-        }while(!page.isLast());
-    }
 
+        int pageNumber=0, index=0, success=0, fail=0;
+        Page<QualityScore> page;
+        ArrayList<FutureTask> futureTasks = new ArrayList<>();
+        do{
+            page = propertyRepository.findAll(PageRequest.of(pageNumber, batch));
+            List<QualityScore> PropArr = page.getContent();
+            Callable callable = new CallableImpl(PropArr);
+            futureTasks.add(new FutureTask(callable));
+            Thread t = new Thread(futureTasks.get(index++));
+            t.start();
+        }while(!page.isLast());
+
+        for(int i=0;i<index;i++)
+        {
+            AbstractMap.Entry<Integer, Integer> pair = (AbstractMap.Entry<Integer, Integer>) futureTasks.get(i).get();
+            success+=pair.getKey();
+            fail+=pair.getValue();
+        }
+
+        return new AbstractMap.SimpleEntry<Integer, Integer>(success, fail);
+    }
 }
