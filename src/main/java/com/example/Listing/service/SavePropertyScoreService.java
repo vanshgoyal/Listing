@@ -8,5 +8,5 @@ public interface SavePropertyScoreService {
 
     void savePropertyQualityScore(String propertyId, QualityScore qualityScore);
 
-    ResponseEntity savePropertyRelevanceScore(String propertyId, RelevanceScore relevanceScore);
+    ResponseEntity<?> savePropertyRelevanceScore(String propertyId, RelevanceScore relevanceScore);
 }

@@ -37,24 +37,16 @@ public class SavePropertyScoreServiceImpl implements SavePropertyScoreService {
         }
     }
 
-    public ResponseEntity savePropertyRelevanceScore(String propertyId, RelevanceScore relevanceScore) {
-        try{
-            if (relevanceRepository.findBypropertyId(propertyId) != null) {
-                System.out.println("Property with current Id already present. Updating Score.");
-                Query query = new Query(
-                        Criteria.where("propertyId").is(propertyId));
-                Update update = new Update().set("relevanceScore", relevanceScore.getRelevanceScore());
-                mt.findAndModify(query, update, RelevanceScore.class);
-                return new ResponseEntity(HttpStatus.ACCEPTED);
-            } else {
-                relevanceRepository.save(relevanceScore);
-                return new ResponseEntity(HttpStatus.ACCEPTED);
-            }
+    public ResponseEntity<?> savePropertyRelevanceScore(String propertyId, RelevanceScore relevanceScore) {
+        if (relevanceRepository.findBypropertyId(propertyId) != null) {
+            System.out.println("Property with current Id already present. Updating Score.");
+            Query query = new Query(
+                    Criteria.where("propertyId").is(propertyId));
+            Update update = new Update().set("relevanceScore", relevanceScore.getRelevanceScore());
+            mt.findAndModify(query, update, RelevanceScore.class);
+        } else {
+            relevanceRepository.save(relevanceScore);
         }
-        catch (Exception e)
-        {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-
+        return new ResponseEntity<>("Updated Successfully", HttpStatus.OK);
     }
 }
