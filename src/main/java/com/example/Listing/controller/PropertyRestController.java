@@ -74,7 +74,7 @@ public class PropertyRestController {
             ControllerException ce = new ControllerException("611", "Something went wrong in controller");
             return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
         }
-        savePropertyScoreService.savePropertyRelevanceScore(propertyId, relevanceScore);
+        ResponseEntity responseEntity = savePropertyScoreService.savePropertyRelevanceScore(propertyId, relevanceScore);
         return new ResponseEntity(relevanceScore, HttpStatus.OK);
     }
 
@@ -90,7 +90,7 @@ public class PropertyRestController {
             ControllerException ce = new ControllerException("611", "Something went wrong in controller");
             return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
         }
-        savePropertyScoreService.savePropertyRelevanceScore(propertyId, relevanceScore);
+        ResponseEntity responseEntity = savePropertyScoreService.savePropertyRelevanceScore(propertyId, relevanceScore);
         return new ResponseEntity(relevanceScore, HttpStatus.OK);
     }
 
