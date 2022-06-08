@@ -18,7 +18,7 @@ public class QualityScore {
 
     private float qualityScore;
 
-    public QualityScore(){
+    public QualityScore() {
 
     }
 

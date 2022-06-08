@@ -38,9 +38,23 @@ public class CoefficientModel {
     private float numberOfPhotos;
 
 
+    public CoefficientModel() {
 
-    public CoefficientModel(){
+    }
 
+    public CoefficientModel(String id, String cityId, Map<String, Float> type, float latitude, float longitude, Map<String, Float> leaseType, Map<String, Float> parking, Map<String, Float> furnishing, float rent, float deposit, Map<String, Float> buildingType, float numberOfPhotos) {
+        this.id = id;
+        this.cityId = cityId;
+        this.type = type;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.leaseType = leaseType;
+        this.parking = parking;
+        this.furnishing = furnishing;
+        this.rent = rent;
+        this.deposit = deposit;
+        this.buildingType = buildingType;
+        this.numberOfPhotos = numberOfPhotos;
     }
 
     @Override
@@ -59,20 +73,5 @@ public class CoefficientModel {
                 ", buildingType=" + buildingType +
                 ", numberOfPhotos='" + numberOfPhotos + '\'' +
                 '}';
-    }
-
-    public CoefficientModel(String id, String cityId, Map<String, Float> type, float latitude, float longitude, Map<String, Float> leaseType, Map<String, Float> parking, Map<String, Float> furnishing, float rent, float deposit, Map<String, Float> buildingType, float numberOfPhotos) {
-        this.id = id;
-        this.cityId = cityId;
-        this.type = type;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.leaseType = leaseType;
-        this.parking = parking;
-        this.furnishing = furnishing;
-        this.rent = rent;
-        this.deposit = deposit;
-        this.buildingType = buildingType;
-        this.numberOfPhotos = numberOfPhotos;
     }
 }

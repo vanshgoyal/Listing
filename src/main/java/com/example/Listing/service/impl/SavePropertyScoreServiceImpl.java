@@ -1,6 +1,5 @@
 package com.example.Listing.service.impl;
 
-import com.example.Listing.model.MassModel;
 import com.example.Listing.model.QualityScore;
 import com.example.Listing.model.RelevanceScore;
 import com.example.Listing.repository.RepositoryProperty.PropertyRepository;
@@ -24,30 +23,26 @@ public class SavePropertyScoreServiceImpl implements SavePropertyScoreService {
     @Autowired
     private MongoTemplate mt;
 
-    public void savePropertyQualityScore(String propertyId, QualityScore qualityScore){
-        if(propertyRepository.findBypropertyId(propertyId)!= null)
-        {
+    public void savePropertyQualityScore(String propertyId, QualityScore qualityScore) {
+        if (propertyRepository.findBypropertyId(propertyId) != null) {
             System.out.println("Property with current Id already present. Updating Score.");
             Query query = new Query(
                     Criteria.where("propertyId").is(propertyId));
             Update update = new Update().set("qualityScore", qualityScore.getQualityScore());
             mt.findAndModify(query, update, QualityScore.class);
-        }
-        else {
+        } else {
             propertyRepository.save(qualityScore);
         }
     }
 
-    public void savePropertyRelevanceScore(String propertyId, RelevanceScore relevanceScore){
-        if(relevanceRepository.findBypropertyId(propertyId)!= null)
-        {
+    public void savePropertyRelevanceScore(String propertyId, RelevanceScore relevanceScore) {
+        if (relevanceRepository.findBypropertyId(propertyId) != null) {
             System.out.println("Property with current Id already present. Updating Score.");
             Query query = new Query(
                     Criteria.where("propertyId").is(propertyId));
             Update update = new Update().set("relevanceScore", relevanceScore.getRelevanceScore());
             mt.findAndModify(query, update, RelevanceScore.class);
-        }
-        else {
+        } else {
             relevanceRepository.save(relevanceScore);
         }
     }
